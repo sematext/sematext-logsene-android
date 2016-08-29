@@ -3,7 +3,7 @@
     <groupId>com.sematext.android</groupId>
     <artifactId>sematext-logsene</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.1.0-SNAPSHOT</version>
     <name>sematext-logsene</name>
     <description>
         Logsene client library for Android. This library let you collect mobile
@@ -28,7 +28,7 @@
         <connection>scm:git:git@github.com:sematext/sematext-logsene-android</connection>
         <developerConnection>scm:git:git@github.com:sematext/sematext-logsene-android</developerConnection>
         <url>https://github.com/sematext/sematext-logsene-android</url>
-      <tag>v1.0.0</tag>
+      <tag>HEAD</tag>
   </scm>
     <parent>
         <groupId>org.sonatype.oss</groupId>
