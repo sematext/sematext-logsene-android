@@ -26,7 +26,7 @@ The library sends data to Logsene servers, so you will need to add the `INTERNET
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
 ```
 
-We send the data in batches to preserve battery (every 60s), or if we have more than 10 events queued up. We also save the events while the device is offline so you don't have to worry about losing any data. By default we will keep up to 5,000 events while offline. All of this is taken care of by our Android Service, so you will need to configure it. Add the following inside the application manifest (inside `<application>`):
+The library sends data in batches to preserve battery (every 60s), or if there are more than 10 events queued up. Events are saved while the device is offline so you don't have to worry about losing any data. By default the library keeps up to 5,000 events while offline. All of this is taken care of by our Android Service, so you will need to configure it. Add the following inside the application manifest (inside `<application>`):
 
 ```xml
 <service
@@ -45,7 +45,7 @@ We send the data in batches to preserve battery (every 60s), or if we have more 
  * **appToken (required)**: This is your Logsene application token, you should have received one after registering and creating your Logsene app.
  We **highly recommend** creating a write-only token in your app settings to prevent any unauthorized access to your logs.
  * **type (required)**: Type to be used for all events (Logsene uses Elasticsearch compatible API)
- * **maxOfflineMessages**: Maximum number of offline stored events. We store events on the device while it's offline, or if we are unable to send them to Logsene for some reason.
+ * **maxOfflineMessages**: Maximum number of offline stored events. Events are stored on the device while it's offline, or if the library is unable to send them to Logsene for some reason.
  * **receiverUrl**: If you are using Logsene On Premises, you can put your Logsene Receiver URL here.
 
 Example Application
@@ -72,14 +72,14 @@ try {
 
 To visualize the collected data, you would use the [integrated Kibana dashboard][hosted-kibana]. If you're new to Kibana, you can checkout [this video tutorials series][video-tutorials].
 
-If you don't see the events in the dashboard immediately, note that we send the data in batches to preserve the battery (every 60s), or if we have more than 10 events queued up. We also save the events while the device is offline, so you don't have to worry about losing any data.
+If you don't see the events in the dashboard immediately, note that data are sent in batches to preserve the battery (every 60s), or if there are more than 10 events queued up. Events are saved while the device is offline, so you don't have to worry about losing any data.
 
-When it comes to the structure of your events, you are free to choose your own, the above is just an example. You can use any number of fields, and you can use nested fields. Basically, any valid JSON object will work fine. Note that we reserve the `meta` field for meta information (see [Meta Fields](#meta-fields) below). If you set a value for this field when sending an event, we will not include any meta information for that event.
+When it comes to the structure of your events, you are free to choose your own, the above is just an example. You can use any number of fields, and you can use nested fields. Basically, any valid JSON object will work fine. Note that the `meta` field is reserved for meta information (see [Meta Fields](#meta-fields) below). If you set a value for this field when sending an event, the meta information will not be included for that event.
 
 Meta Fields
 -----------
 
-We also add some meta fields to each event, all stored within the "meta" field:
+Meta data are added to each event, all stored within the "meta" field:
 
  * versionName (as defined in your build.gradle)
  * versionCode (as defined in your build.gradle)
@@ -125,7 +125,7 @@ logger.addHandler(new LogseneHandler(context));
 
 ### Logging exceptions
 
-If you use JUL and the `LogseneHandler`, all logged exceptions will be sent to Logsene, no further configuration is needed. However, if you don't use JUL, we've provided a helper method to log exceptions:
+If you use JUL and the `LogseneHandler`, all logged exceptions will be sent to Logsene, no further configuration is needed. However, if you don't use JUL, the library provides a helper method to log exceptions:
 
 ```java
 Logsene logsene = new Logsene(context);
