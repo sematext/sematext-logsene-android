@@ -6,6 +6,9 @@
 Logsene for Android Applications
 ================================
 
+[![CI Status](http://img.shields.io/travis/sematext/sematext-logsene-android.svg?style=flat)](https://travis-ci.org/sematext/sematext-logsene-android)
+[![License](https://img.shields.io/github/license/sematext/sematext-logsene-android.svg)](https://img.shields.io/github/license/sematext/sematext-logsene-android.svg)
+
 [Logsene is ELK as a Service][logsene]. This library lets you collect **mobile analytics** and **log data** from your Android applications using Logsene. If you don't have a Logsene account, you can [register for free][register] to get your app token.
 
 Getting Started
