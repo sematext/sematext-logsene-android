@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
-import java.util.Objects;
 
 /**
  * Logs messages to Logsene from Android applications.
@@ -24,7 +23,7 @@ public class Logsene {
   private String uuid;
 
   public Logsene(Context context) {
-    Objects.requireNonNull(context);
+    Utils.requireNonNull(context);
     this.context = context;
     this.uuid = Installation.id(context);
   }
@@ -36,7 +35,7 @@ public class Logsene {
    * @param message message text
      */
   public void log(String level, String message) {
-    Objects.requireNonNull(message);
+    Utils.requireNonNull(message);
     JSONObject obj = new JSONObject();
     try {
       obj.put("level", level);
@@ -102,7 +101,7 @@ public class Logsene {
    * @param error any throwable
      */
   public void log(String level, Throwable error) {
-    Objects.requireNonNull(error);
+    Utils.requireNonNull(error);
     JSONObject obj = new JSONObject();
     try {
       obj.put("level", level);
@@ -121,7 +120,7 @@ public class Logsene {
    * @param object the event data.
    */
   public void event(JSONObject object) {
-    Objects.requireNonNull(object);
+    Utils.requireNonNull(object);
     sendServiceIntent(object);
   }
 

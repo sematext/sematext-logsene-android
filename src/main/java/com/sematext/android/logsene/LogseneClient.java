@@ -7,7 +7,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
-import java.util.Objects;
+
+import com.sematext.android.Utils;
 
 /**
  * Base client for interacting with Logsene API.
@@ -27,8 +28,8 @@ public class LogseneClient {
    * @param appToken the logsene app token
    */
   public LogseneClient(String receiverUrl, String appToken) {
-    Objects.requireNonNull(receiverUrl);
-    Objects.requireNonNull(appToken);
+    Utils.requireNonNull(receiverUrl);
+    Utils.requireNonNull(appToken);
     receiverUrl = receiverUrl.trim();
     if (receiverUrl.endsWith("/")) {
       receiverUrl = receiverUrl.substring(0, receiverUrl.length() - 1);
@@ -46,7 +47,7 @@ public class LogseneClient {
    * @throws IOException if unable to send request
    */
   public ApiResponse execute(Bulk bulk) throws IOException {
-    Objects.requireNonNull(bulk);
+    Utils.requireNonNull(bulk);
     Request request = new Request.Builder()
         .url(receiverUrl + "/_bulk")
         .post(bulk.toBody(appToken))

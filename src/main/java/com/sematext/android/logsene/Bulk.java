@@ -4,7 +4,8 @@ import okhttp3.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import com.sematext.android.Utils;
 
 /**
  * Represents a bulk request.
@@ -20,8 +21,8 @@ public class Bulk {
    * @throws IllegalArgumentException if sources and types don't have the same size
    */
   public Bulk(List<String> sources, List<String> types) {
-    Objects.requireNonNull(sources);
-    Objects.requireNonNull(types);
+    Utils.requireNonNull(sources);
+    Utils.requireNonNull(types);
     if (sources.size() != types.size()) {
       throw new IllegalArgumentException("sources and types should have the same size");
     }
@@ -46,7 +47,7 @@ public class Bulk {
    * @return the request body as string
    */
   public String toString(String index) {
-    Objects.requireNonNull(index);
+    Utils.requireNonNull(index);
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < sources.size(); i++) {
       sb.append(String.format("{ \"index\" : { \"_index\": \"%s\", \"_type\" : \"%s\" } }\n", index, types.get(i)));
@@ -69,8 +70,8 @@ public class Bulk {
      * @return the builder
      */
     public Builder addSource(String source, String type) {
-      Objects.requireNonNull(source);
-      Objects.requireNonNull(type);
+      Utils.requireNonNull(source);
+      Utils.requireNonNull(type);
       sources.add(source);
       types.add(type);
       return this;

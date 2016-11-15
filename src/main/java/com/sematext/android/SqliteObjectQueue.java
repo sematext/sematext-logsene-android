@@ -11,7 +11,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Persistent FIFO queue implementation with Sqlite.
@@ -51,8 +50,8 @@ class SqliteObjectQueue {
    * @param dbName name to use for the sqlite database
    */
   public SqliteObjectQueue(Context context, String dbName) {
-    Objects.requireNonNull(context);
-    Objects.requireNonNull(dbName);
+    Utils.requireNonNull(context);
+    Utils.requireNonNull(dbName);
     ObjectDbHelper dbHelper = new ObjectDbHelper(context, dbName);
     this.db = dbHelper.getWritableDatabase();
     this.maxSize = DEFAULT_MAX_SIZE;
@@ -66,8 +65,8 @@ class SqliteObjectQueue {
    * @param maxSize max size of the queue, older records will be overwritten
    */
   public SqliteObjectQueue(Context context, String dbName, int maxSize) {
-    Objects.requireNonNull(context);
-    Objects.requireNonNull(dbName);
+    Utils.requireNonNull(context);
+    Utils.requireNonNull(dbName);
     if (maxSize <= 0) {
       throw new IllegalArgumentException("maxSize must be greater than 0");
     }
@@ -92,7 +91,7 @@ class SqliteObjectQueue {
    * Pushes element to queue.
    */
   public void add(JSONObject obj) {
-    Objects.requireNonNull(obj);
+    Utils.requireNonNull(obj);
     db.execSQL("INSERT INTO " + TABLE_NAME + "(data) VALUES (?)", new Object[] { obj.toString() } );
     if (cachedCount != null) {
       cachedCount += 1;

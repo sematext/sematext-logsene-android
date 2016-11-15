@@ -6,8 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-enum Utils {
-  INSTANCE;
+public enum Utils {
+  INSTANCE, Utils;
 
   private static final SimpleDateFormat ISO8601_FORMAT;
   static {
@@ -30,5 +30,11 @@ enum Utils {
     PrintWriter pw = new PrintWriter(sw, true);
     throwable.printStackTrace(pw);
     return sw.getBuffer().toString();
+  }
+
+  public static void requireNonNull(Object o) {
+    if (o == null) {
+      throw new NullPointerException();
+    }
   }
 }
