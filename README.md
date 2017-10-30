@@ -41,6 +41,7 @@ The library sends data in batches to preserve battery (every 60s), or if there a
     <meta-data android:name="type" android:value="example" />
     <!-- optional fields below -->
     <meta-data android:name="maxOfflineMessages" android:value="5000" />
+    <!-- For EU location use https://logsene-receiver.eu.sematext.com as the receiverUrl -->
     <meta-data android:name="receiverUrl" android:value="https://logsene-receiver.sematext.com" />
 </service>
 ```
@@ -49,7 +50,7 @@ The library sends data in batches to preserve battery (every 60s), or if there a
  We **highly recommend** creating a write-only token in your app settings to prevent any unauthorized access to your logs.
  * **type (required)**: Type to be used for all events (Logsene uses Elasticsearch compatible API)
  * **maxOfflineMessages**: Maximum number of offline stored events. Events are stored on the device while it's offline, or if the library is unable to send them to Logsene for some reason.
- * **receiverUrl**: If you are using Logsene On Premises, you can put your Logsene Receiver URL here.
+ * **receiverUrl**: If you are using Logsene On Premises, you can put your Logsene Receiver URL here. For EU location please use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
 
 Example Application
 -------------------
