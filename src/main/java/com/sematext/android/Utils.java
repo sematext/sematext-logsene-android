@@ -12,7 +12,7 @@ public enum Utils {
   private static final SimpleDateFormat ISO8601_FORMAT;
   static {
     TimeZone tz = TimeZone.getTimeZone("UTC");
-    ISO8601_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+    ISO8601_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SZ");
     ISO8601_FORMAT.setTimeZone(tz);
   }
 
