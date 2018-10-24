@@ -19,7 +19,7 @@ If you haven't already, register for a free account. Create a new Logsene app to
 Add the following gradle dependency to your android application:
 
 ```
-compile 'com.sematext.android:sematext-logsene:1.0.0'
+compile 'com.sematext.android:sematext-logsene:1.0.3'
 ```
 
 The library sends data to Logsene servers, so you will need to add the `INTERNET` and `ACCESS_NETWORK_STATE` permissions to your application manifest.
