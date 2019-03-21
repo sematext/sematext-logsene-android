@@ -20,6 +20,16 @@ Add the following gradle dependency to your android application:
 
 ```
 compile 'com.sematext.android:sematext-logsene:1.0.3'
+allprojects {
+ repositories {
+    jcenter()
+    maven { url "https://jitpack.io" }
+ }
+}
+
+dependencies {
+    compile 'com.github.sematext:logseneandroid:2.0.0'
+}
 ```
 
 The library sends data to Logsene servers, so you will need to add the `INTERNET` and `ACCESS_NETWORK_STATE` permissions to your application manifest.
@@ -29,7 +39,12 @@ The library sends data to Logsene servers, so you will need to add the `INTERNET
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
 ```
 
-The library sends data in batches to preserve battery (every 60s), or if there are more than 10 events queued up. Events are saved while the device is offline so you don't have to worry about losing any data. By default the library keeps up to 5,000 events while offline. All of this is taken care of by our Android Service, so you will need to configure it. Add the following inside the application manifest (inside `<application>`):
+The library sends data in batches to preserve battery (every 15 minutes), or if
+there are more than 10 events queued up. Events are saved while the device is
+offline so you don't have to worry about losing any data. By default the
+library keeps up to 5,000 events while offline.
+
+Add the following inside the application manifest (inside `<application>`):
 
 ```xml
 <service
@@ -37,25 +52,39 @@ The library sends data in batches to preserve battery (every 60s), or if there a
     android:exported="false"
     android:process=":androidService">
 
-    <meta-data android:name="appToken" android:value="yourtoken" />
-    <meta-data android:name="type" android:value="example" />
-    <!-- optional fields below -->
-    <meta-data android:name="maxOfflineMessages" android:value="5000" />
+    <meta-data
+      android:name="LogseneAppToken"
+      android:value="yourtoken" />
+    <meta-data
+      android:name="LogseneType"
+      android:value="example" />
+
     <!-- For EU region use https://logsene-receiver.eu.sematext.com as the receiverUrl -->
-    <meta-data android:name="receiverUrl" android:value="https://logsene-receiver.sematext.com" />
+    <meta-data
+      android:name="LogseneReceiverUrl"
+      android:value="https://logsene-receiver.sematext.com" />
 </service>
 ```
 
- * **appToken (required)**: This is your Logsene application token, you should have received one after registering and creating your Logsene app.
+ * **LogseneAppToken (required)**: This is your Logsene application token, you should have received one after registering and creating your Logsene app.
  We **highly recommend** creating a write-only token in your app settings to prevent any unauthorized access to your logs.
- * **type (required)**: Type to be used for all events (Logsene uses Elasticsearch compatible API)
- * **maxOfflineMessages**: Maximum number of offline stored events. Events are stored on the device while it's offline, or if the library is unable to send them to Logsene for some reason.
- * **receiverUrl**: If you are using Logsene On Premises, you can put your Logsene Receiver URL here. For EU region please use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
+ * **LogseneType (required)**: Type to be used for all events (Logsene uses Elasticsearch compatible API)
+ * **LogseneMaxOfflineMessages**: Maximum number of offline stored events. Events are stored on the device while it's offline, or if the library is unable to send them to Logsene for some reason.
+ * **LogseneReceiverUrl**: If you are using Logsene On Premises, you can put your Logsene Receiver URL here. For EU region please use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
+ * **LogseneMinTimeDelay**: Minimum amount of time to wait between sending logs while application is running and creating new log messages
+ * **LogseneInterval**: time interval for sending logs regardless of app being active (minimum 15 minutes)
+ * **LogseneRequiresUnmeteredNetwork**: if logs should be shipped only on unmetered network connection
+ * **LogseneRequiresDeviceIdle**: if logs should be shipped only when device is idle
+ * **LogseneRequiresBatteryNotLow**: if logs should be shipped only when battery is not low
+ * **LogseneInterval**: time interval for sending logs regardless of app being active (minimum 15 minutes)
+ * **LogseneInterval**: time interval for sending logs regardless of app being active (minimum 15 minutes)
 
 Example Application
 -------------------
 
 To see how some basic use cases are actually implemented, checkout the bundled `TestApp` android application. Make sure to set your own application token in the android manifest.
+
+**Note** that it's highly recommended that you use one instance of Logsene at any time in your app.
 
 Mobile Application Analytics
 ----------------------------
@@ -123,8 +152,9 @@ For integrating with existing logging frameworks, see below.
 If your application uses JUL (java.util.logging) loggers, you can use the provided custom Handler for Logsene. You will need to configure it through code, since we need a reference to the `Context` object. If you configure your loggers to use the `LogseneHandler`, all log messages will be sent to Logsene for centralized logging.
 
 ```java
+Logsene logsene = new Logsene(context);
 Logger logger = Logger.getLogger("mylogger");
-logger.addHandler(new LogseneHandler(context));
+logger.addHandler(new LogseneHandler(logsene));
 ```
 
 ### Logging exceptions

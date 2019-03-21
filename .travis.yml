@@ -1,1 +1,14 @@
-language: java
+language: android
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-28.0.0
+    - android-28
+  licenses:
+    - android-sdk-preview-license-.+
+    - android-sdk-license-.+
+    - google-gdk-license-.+dd-
+
+script:
+  - ./gradlew build
