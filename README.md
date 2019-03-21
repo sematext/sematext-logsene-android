@@ -1,6 +1,6 @@
 [logsene]: https://sematext.com/logsene/
-[register]: https://apps.sematext.com/users-web/register.do
-[hosted-kibana]: https://sematext.com/blog/2015/06/11/1-click-elk-stack-hosted-kibana-4/
+[register]: https://apps.sematext.com/ui/registration
+[hosted-kibana]: https://sematext.com/blog/1-click-elk-stack-hosted-kibana-4/
 [video-tutorials]: https://www.elastic.co/blog/kibana-4-video-tutorials-part-1
 
 Logsene for Android Applications
