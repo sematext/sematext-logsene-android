@@ -19,7 +19,6 @@ If you haven't already, register for a free account. Create a new Logsene app to
 Add the following gradle dependency to your android application:
 
 ```
-compile 'com.sematext.android:sematext-logsene:1.0.3'
 allprojects {
  repositories {
     jcenter()
@@ -28,7 +27,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.sematext:logseneandroid:2.0.0'
+    compile 'com.github.sematext:sematext-logsene-android:2.0.0'
 }
 ```
 
