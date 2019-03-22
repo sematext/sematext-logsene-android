@@ -75,8 +75,6 @@ Add the following inside the application manifest (inside `<application>`):
  * **LogseneRequiresUnmeteredNetwork**: if logs should be shipped only on unmetered network connection
  * **LogseneRequiresDeviceIdle**: if logs should be shipped only when device is idle
  * **LogseneRequiresBatteryNotLow**: if logs should be shipped only when battery is not low
- * **LogseneInterval**: time interval for sending logs regardless of app being active (minimum 15 minutes)
- * **LogseneInterval**: time interval for sending logs regardless of app being active (minimum 15 minutes)
 
 Example Application
 -------------------
