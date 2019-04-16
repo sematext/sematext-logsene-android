@@ -46,23 +46,17 @@ library keeps up to 5,000 events while offline.
 Add the following inside the application manifest (inside `<application>`):
 
 ```xml
-<service
-    android:name="com.sematext.android.LogseneService"
-    android:exported="false"
-    android:process=":androidService">
+ <meta-data
+   android:name="LogseneAppToken"
+   android:value="yourtoken" />
+ <meta-data
+   android:name="LogseneType"
+   android:value="example" />
 
-    <meta-data
-      android:name="LogseneAppToken"
-      android:value="yourtoken" />
-    <meta-data
-      android:name="LogseneType"
-      android:value="example" />
-
-    <!-- For EU region use https://logsene-receiver.eu.sematext.com as the receiverUrl -->
-    <meta-data
-      android:name="LogseneReceiverUrl"
-      android:value="https://logsene-receiver.sematext.com" />
-</service>
+ <!-- For EU region use https://logsene-receiver.eu.sematext.com as the receiverUrl -->
+ <meta-data
+   android:name="LogseneReceiverUrl"
+   android:value="https://logsene-receiver.sematext.com" />
 ```
 
  * **LogseneAppToken (required)**: This is your Logsene application token, you should have received one after registering and creating your Logsene app.
