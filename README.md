@@ -1,6 +1,6 @@
 [logsene]: https://sematext.com/logsene/
 [register]: https://apps.sematext.com/ui/registration
-[hosted-kibana]: https://sematext.com/blog/1-click-elk-stack-hosted-kibana-4/
+[hosted-kibana]: https://sematext.com/docs/logs/kibana/
 [video-tutorials]: https://www.elastic.co/blog/kibana-4-video-tutorials-part-1
 
 Logsene for Android Applications
@@ -94,7 +94,7 @@ try {
 }
 ```
 
-To visualize the collected data, you would use the [integrated Kibana dashboard][hosted-kibana]. If you're new to Kibana, you can checkout [this video tutorials series][video-tutorials].
+To visualize the collected data, you would use the [integrated Kibana dashboard][hosted-kibana].
 
 If you don't see the events in the dashboard immediately, note that data are sent in batches to preserve the battery (every 60s), or if there are more than 10 events queued up. Events are saved while the device is offline, so you don't have to worry about losing any data.
 
