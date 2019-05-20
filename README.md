@@ -27,7 +27,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.sematext:sematext-logsene-android:2.0.0'
+    compile 'com.github.sematext:sematext-logsene-android:2.1.0'
 }
 ```
 
