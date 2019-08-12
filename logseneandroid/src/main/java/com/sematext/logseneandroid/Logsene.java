@@ -326,7 +326,7 @@ public class Logsene {
           + maxOfflineMessages + "), some logs might be lost.");
     }
 
-    boolean canSend = lastScheduled == -1 || SystemClock.elapsedRealtime() - lastScheduled > DEFAULT_MIN_TIME_DELAY;
+    boolean canSend = lastScheduled == -1 || SystemClock.elapsedRealtime() - lastScheduled > minTimeDelay;
     if (preflightQueue.size() >= DEFAULT_MIN_BATCH_SIZE && canSend) {
       scheduleConstrainedWorker();
       lastScheduled = SystemClock.elapsedRealtime();
