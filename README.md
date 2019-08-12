@@ -64,8 +64,8 @@ Add the following inside the application manifest (inside `<application>`):
  * **LogseneType (required)**: Type to be used for all events (Logsene uses Elasticsearch compatible API)
  * **LogseneMaxOfflineMessages**: Maximum number of offline stored events. Events are stored on the device while it's offline, or if the library is unable to send them to Logsene for some reason.
  * **LogseneReceiverUrl**: If you are using Logsene On Premises, you can put your Logsene Receiver URL here. For EU region please use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
- * **LogseneMinTimeDelay**: Minimum amount of time to wait between sending logs while application is running and creating new log messages
- * **LogseneInterval**: time interval for sending logs regardless of app being active (minimum 15 minutes)
+ * **LogseneMinTimeDelay**: Minimum amount of time (in milliseconds) to wait between sending logs while application is running and creating new log messages
+ * **LogseneInterval**: time interval (in milliseconds) for sending logs regardless of app being active (minimum 15 minutes)
  * **LogseneRequiresUnmeteredNetwork**: if logs should be shipped only on unmetered network connection
  * **LogseneRequiresDeviceIdle**: if logs should be shipped only when device is idle
  * **LogseneRequiresBatteryNotLow**: if logs should be shipped only when battery is not low
