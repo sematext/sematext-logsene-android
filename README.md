@@ -3,20 +3,20 @@
 [hosted-kibana]: https://sematext.com/docs/logs/kibana/
 [video-tutorials]: https://www.elastic.co/blog/kibana-4-video-tutorials-part-1
 
-Logsene for Android Applications
-================================
+Library for Shipping Android Applications Logs to Sematext
+==========================================================
 
 [![](https://jitpack.io/v/sematext/sematext-logsene-android.svg)](https://jitpack.io/#sematext/sematext-logsene-android)
 [![License](https://img.shields.io/github/license/sematext/sematext-logsene-android.svg)](https://img.shields.io/github/license/sematext/sematext-logsene-android.svg)
 
-[Logsene is ELK as a Service][logsene]. This library lets you collect **mobile analytics** and **log data** from your Android applications using Logsene. If you don't have a Logsene account, you can [register for free][register] to get your app token.
+[Sematext Logs is ELK as a Service][logsene]. This library lets you collect **mobile analytics** and **log data** from your Android applications using Sematext. If you don't have a Sematext account, you can [register for free][register] to get your [App](https://sematext.com/docs/guide/app-guide/) token.
 
 Getting Started
 ===============
 
-If you haven't already, register for a free account. Create a new Logsene app to get the app token, you will need it later.
+If you haven't already, register for a free account. Create a new Logs App to get the App token, you will need it later.
 
-Add the following gradle dependency to your android application:
+Add the following gradle dependency to your Android application:
 
 ```
 allprojects {
@@ -31,7 +31,7 @@ dependencies {
 }
 ```
 
-The library sends data to Logsene servers, so you will need to add the `INTERNET` and `ACCESS_NETWORK_STATE` permissions to your application manifest.
+The library sends data to Sematext servers, so you will need to add the `INTERNET` and `ACCESS_NETWORK_STATE` permissions to your application manifest.
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
@@ -59,11 +59,11 @@ Add the following inside the application manifest (inside `<application>`):
    android:value="https://logsene-receiver.sematext.com" />
 ```
 
- * **LogseneAppToken (required)**: This is your Logsene application token, you should have received one after registering and creating your Logsene app.
+ * **LogseneAppToken (required)**: This is your Logs App token, you should have received one after registering and creating your Logs App.
  We **highly recommend** creating a write-only token in your app settings to prevent any unauthorized access to your logs.
- * **LogseneType (required)**: Type to be used for all events (Logsene uses Elasticsearch compatible API)
- * **LogseneMaxOfflineMessages**: Maximum number of offline stored events. Events are stored on the device while it's offline, or if the library is unable to send them to Logsene for some reason.
- * **LogseneReceiverUrl**: If you are using Logsene On Premises, you can put your Logsene Receiver URL here. For EU region please use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
+ * **LogseneType (required)**: Type to be used for all events (Sematext Logs uses Elasticsearch compatible API)
+ * **LogseneMaxOfflineMessages**: Maximum number of offline stored events. Events are stored on the device while it's offline, or if the library is unable to send them to Sematext for some reason.
+ * **LogseneReceiverUrl**: If you are using [Sematext Enterprise](https://sematext.com/enterprise), you can put your Logsene Receiver URL here. For EU region please use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
  * **LogseneMinTimeDelay**: Minimum amount of time (in milliseconds) to wait between sending logs while application is running and creating new log messages
  * **LogseneInterval**: time interval (in milliseconds) for sending logs regardless of app being active (minimum 15 minutes)
  * **LogseneRequiresUnmeteredNetwork**: if logs should be shipped only on unmetered network connection
@@ -73,14 +73,14 @@ Add the following inside the application manifest (inside `<application>`):
 Example Application
 -------------------
 
-To see how some basic use cases are actually implemented, checkout the bundled `TestApp` android application. Make sure to set your own application token in the android manifest.
+To see how some basic use cases are actually implemented, checkout the bundled `TestApp` android application. Make sure to set your own App token in the Android manifest.
 
 **Note** that it's highly recommended that you use one instance of Logsene at any time in your app.
 
 Mobile Application Analytics
 ----------------------------
 
-With Logsene you get Elasticsearch and Kibana out of the box, which makes it great for mobile analytics. Once you've setup the Logsene service, it's trivial to start sending custom events. For example, you may want to send an event every time a user starts an activity. In that case you could put the following inside the `onCreate()` method:
+With Sematext you get Elasticsearch and Kibana out of the box, which makes it great for mobile analytics. Once you've setup the Logsene service, it's trivial to start sending custom events. For example, you may want to send an event every time a user starts an activity. In that case you could put the following inside the `onCreate()` method:
 
 ```java
 try {
@@ -94,7 +94,7 @@ try {
 }
 ```
 
-To visualize the collected data, you would use the [integrated Kibana dashboard][hosted-kibana].
+To visualize the collected data, you would use the [integrated Kibana dashboard][hosted-kibana] or Sematext native UI.
 
 If you don't see the events in the dashboard immediately, note that data are sent in batches to preserve the battery (every 60s), or if there are more than 10 events queued up. Events are saved while the device is offline, so you don't have to worry about losing any data.
 
@@ -122,7 +122,7 @@ try {
 }
 ```
 
-Note that these meta fields are global, and will be attached to every event sent to Logsene.
+Note that these meta fields are global, and will be attached to every event sent to Sematext.
 
 Centralized Logging
 -------------------
@@ -140,7 +140,7 @@ For integrating with existing logging frameworks, see below.
 
 ### JUL
 
-If your application uses JUL (java.util.logging) loggers, you can use the provided custom Handler for Logsene. You will need to configure it through code, since we need a reference to the `Context` object. If you configure your loggers to use the `LogseneHandler`, all log messages will be sent to Logsene for centralized logging.
+If your application uses JUL (java.util.logging) loggers, you can use the provided custom Handler for Logsene. You will need to configure it through code, since we need a reference to the `Context` object. If you configure your loggers to use the `LogseneHandler`, all log messages will be sent to Sematext for centralized logging.
 
 ```java
 Logsene logsene = new Logsene(context);
@@ -150,7 +150,7 @@ logger.addHandler(new LogseneHandler(logsene));
 
 ### Logging exceptions
 
-If you use JUL and the `LogseneHandler`, all logged exceptions will be sent to Logsene, no further configuration is needed. However, if you don't use JUL, the library provides a helper method to log exceptions:
+If you use JUL and the `LogseneHandler`, all logged exceptions will be sent to Sematext, no further configuration is needed. However, if you don't use JUL, the library provides a helper method to log exceptions:
 
 ```java
 Logsene logsene = new Logsene(context);
