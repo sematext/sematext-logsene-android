@@ -31,7 +31,7 @@ dependencies {
 }
 ```
 
-The library sends data to Logsene servers, so you will need to add the `INTERNET` and `ACCESS_NETWORK_STATE` permissions to your application manifest.
+The library sends data to Sematext servers, so you will need to add the `INTERNET` and `ACCESS_NETWORK_STATE` permissions to your application manifest.
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
@@ -140,7 +140,7 @@ For integrating with existing logging frameworks, see below.
 
 ### JUL
 
-If your application uses JUL (java.util.logging) loggers, you can use the provided custom Handler for Logsene. You will need to configure it through code, since we need a reference to the `Context` object. If you configure your loggers to use the `LogseneHandler`, all log messages will be sent to Logsene for centralized logging.
+If your application uses JUL (java.util.logging) loggers, you can use the provided custom Handler for Logsene. You will need to configure it through code, since we need a reference to the `Context` object. If you configure your loggers to use the `LogseneHandler`, all log messages will be sent to Sematext for centralized logging.
 
 ```java
 Logsene logsene = new Logsene(context);
