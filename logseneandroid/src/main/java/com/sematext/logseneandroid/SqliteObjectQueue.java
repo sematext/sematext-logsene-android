@@ -117,14 +117,18 @@ class SqliteObjectQueue {
 
     List<JSONObject> results = new ArrayList<>();
     Cursor c = db.query(TABLE_NAME, new String[] { "data" }, null, null, null, null, "id asc", String.valueOf(max));
-    while(c.moveToNext()) {
-      String data = c.getString(c.getColumnIndex("data"));
-      try {
-        JSONObject o = new JSONObject(data);
-        results.add(o);
-      } catch (JSONException e) {
-        throw new RuntimeException(e);
+    try {
+      while (c.moveToNext()) {
+        String data = c.getString(c.getColumnIndex("data"));
+        try {
+          JSONObject o = new JSONObject(data);
+          results.add(o);
+        } catch (JSONException e) {
+          throw new RuntimeException(e);
+        }
       }
+    } finally {
+      c.close();
     }
     return results;
   }
