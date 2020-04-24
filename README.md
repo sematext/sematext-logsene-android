@@ -3,13 +3,13 @@
 [hosted-kibana]: https://sematext.com/docs/logs/kibana/
 [video-tutorials]: https://www.elastic.co/blog/kibana-4-video-tutorials-part-1
 
-Logsene for Android Applications
-================================
+Library for Shipping Android Applications Logs to Sematext
+==========================================================
 
 [![](https://jitpack.io/v/sematext/sematext-logsene-android.svg)](https://jitpack.io/#sematext/sematext-logsene-android)
 [![License](https://img.shields.io/github/license/sematext/sematext-logsene-android.svg)](https://img.shields.io/github/license/sematext/sematext-logsene-android.svg)
 
-[Sematext Logs is ELK as a Service][logsene]. This library lets you collect **mobile analytics** and **log data** from your Android applications using Sematext Logs. There is an equivalent library for [shipping logs from iOS](https://github.com/sematext/sematext-logsene-ios) available. If you don't have a Sematext account, you can [register for free][register] to get your app token.
+[Sematext Logs is ELK as a Service][logsene]. This library lets you collect **mobile analytics** and **log data** from your Android applications using Sematext. If you don't have a Sematext account, you can [register for free][register] to get your [App](https://sematext.com/docs/guide/app-guide/) token.
 
 Getting Started
 ===============
@@ -59,11 +59,10 @@ Add the following inside the application manifest (inside `<application>`):
    android:value="https://logsene-receiver.sematext.com" />
 ```
 
- * **LogseneAppToken (required)**: This is your Logs App token, you should have received one after registering and creating your Logsene app.
- We **highly recommend** creating a write-only token in your app settings to prevent any unauthorized access to your logs.
+ * **LogseneAppToken (required)**: This is your Logs App token, you should have received one after registering and creating your Logs App. We **highly recommend** creating a write-only token in your app settings to prevent any unauthorized access to your logs.
  * **LogseneType (required)**: Type to be used for all events (Sematext Logs uses Elasticsearch compatible API)
  * **LogseneMaxOfflineMessages**: Maximum number of offline stored events. Events are stored on the device while it's offline, or if the library is unable to send them to Sematext for some reason.
- * **LogseneReceiverUrl**: If you are using [Sematext Enterprise](https://sematext.com/enterprise), you can put your Logs Receiver URL here. For EU region please use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
+ * **LogseneReceiverUrl**: If you are using [Sematext Enterprise](https://sematext.com/enterprise), you can put your Logsene Receiver URL here. For EU region please use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
  * **LogseneMinTimeDelay**: Minimum amount of time (in milliseconds) to wait between sending logs while application is running and creating new log messages
  * **LogseneInterval**: time interval (in milliseconds) for sending logs regardless of app being active (minimum 15 minutes)
  * **LogseneRequiresUnmeteredNetwork**: if logs should be shipped only on unmetered network connection
@@ -73,7 +72,7 @@ Add the following inside the application manifest (inside `<application>`):
 Example Application
 -------------------
 
-To see how some basic use cases are actually implemented, checkout the bundled `TestApp` Android application. Make sure to set your own application token in the Android manifest.
+To see how some basic use cases are actually implemented, checkout the bundled `TestApp` android application. Make sure to set your own App token in the Android manifest.
 
 **Note** that it's highly recommended that you use one instance of Logsene at any time in your app.
 
@@ -94,7 +93,7 @@ try {
 }
 ```
 
-To visualize the collected data, you would use the [integrated Kibana dashboard][hosted-kibana].
+To visualize the collected data, you would use the [integrated Kibana dashboard][hosted-kibana] or Sematext native UI.
 
 If you don't see the events in the dashboard immediately, note that data are sent in batches to preserve the battery (every 60s), or if there are more than 10 events queued up. Events are saved while the device is offline, so you don't have to worry about losing any data.
 
@@ -122,7 +121,7 @@ try {
 }
 ```
 
-Note that these meta fields are global, and will be attached to every event sent to Logsene.
+Note that these meta fields are global, and will be attached to every event sent to Sematext.
 
 Centralized Logging
 -------------------
