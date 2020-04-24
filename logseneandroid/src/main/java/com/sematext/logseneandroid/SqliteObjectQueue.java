@@ -21,14 +21,22 @@ class SqliteObjectQueue {
   private final static int DEFAULT_MAX_SIZE = 5000;
   private final SQLiteDatabase db;
   private final int maxSize;
-  private final String dbName;
   private final static ConcurrentHashMap<String, Long> sizeCache = new ConcurrentHashMap<>();
 
-  public class ObjectDbHelper extends SQLiteOpenHelper {
+  public static class ObjectDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 2;
+    public static final String DATABASE_NAME = "logs";
+    private static ObjectDbHelper dbInstance;
 
-    public ObjectDbHelper(Context context, String dbName) {
-      super(context, dbName, null, DATABASE_VERSION);
+    public static synchronized ObjectDbHelper getInstance(Context context) {
+      if (dbInstance == null) {
+        dbInstance = new ObjectDbHelper(context);
+      }
+      return dbInstance;
+    }
+
+    private ObjectDbHelper(Context context) {
+      super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     public void onCreate(SQLiteDatabase db) {
@@ -49,34 +57,28 @@ class SqliteObjectQueue {
    * Constructor.
    *
    * @param context android context
-   * @param dbName name to use for the sqlite database
    */
-  public SqliteObjectQueue(Context context, String dbName) {
+  public SqliteObjectQueue(Context context) {
     Utils.requireNonNull(context);
-    Utils.requireNonNull(dbName);
-    ObjectDbHelper dbHelper = new ObjectDbHelper(context, dbName);
+    ObjectDbHelper dbHelper = ObjectDbHelper.getInstance(context);
     this.db = dbHelper.getWritableDatabase();
     this.maxSize = DEFAULT_MAX_SIZE;
-    this.dbName = dbName;
   }
 
   /**
    * Constructor.
    *
    * @param context android context
-   * @param dbName name to use for the sqlite database
    * @param maxSize max size of the queue, older records will be overwritten
    */
-  public SqliteObjectQueue(Context context, String dbName, int maxSize) {
+  public SqliteObjectQueue(Context context, int maxSize) {
     Utils.requireNonNull(context);
-    Utils.requireNonNull(dbName);
     if (maxSize <= 0) {
       throw new IllegalArgumentException("maxSize must be greater than 0");
     }
-    ObjectDbHelper dbHelper = new ObjectDbHelper(context, dbName);
+    ObjectDbHelper dbHelper = ObjectDbHelper.getInstance(context);
     this.db = dbHelper.getWritableDatabase();
     this.maxSize = maxSize;
-    this.dbName = dbName;
   }
 
   /**
@@ -84,11 +86,11 @@ class SqliteObjectQueue {
    * @return size of the queue.
    */
   public long size() {
-    if (sizeCache.get(dbName) == null) {
-      sizeCache.put(dbName, DatabaseUtils.queryNumEntries(db, TABLE_NAME));
+    if (sizeCache.get(ObjectDbHelper.DATABASE_NAME) == null) {
+      sizeCache.put(ObjectDbHelper.DATABASE_NAME, DatabaseUtils.queryNumEntries(db, TABLE_NAME));
     }
 
-    return sizeCache.get(dbName);
+    return sizeCache.get(ObjectDbHelper.DATABASE_NAME);
   }
 
   /**
@@ -97,8 +99,8 @@ class SqliteObjectQueue {
   public void add(JSONObject obj) {
     Utils.requireNonNull(obj);
     db.execSQL("INSERT INTO " + TABLE_NAME + "(data) VALUES (?)", new Object[] { obj.toString() } );
-    if (sizeCache.get(dbName) != null) {
-      sizeCache.put(dbName, sizeCache.get(dbName) + 1);
+    if (sizeCache.get(ObjectDbHelper.DATABASE_NAME) != null) {
+      sizeCache.put(ObjectDbHelper.DATABASE_NAME, sizeCache.get(ObjectDbHelper.DATABASE_NAME) + 1);
     }
     if (size() > maxSize) {
       remove(1);
@@ -117,13 +119,19 @@ class SqliteObjectQueue {
 
     List<JSONObject> results = new ArrayList<>();
     Cursor c = db.query(TABLE_NAME, new String[] { "data" }, null, null, null, null, "id asc", String.valueOf(max));
-    while(c.moveToNext()) {
-      String data = c.getString(c.getColumnIndex("data"));
-      try {
-        JSONObject o = new JSONObject(data);
-        results.add(o);
-      } catch (JSONException e) {
-        throw new RuntimeException(e);
+    try {
+      while (c.moveToNext()) {
+        String data = c.getString(c.getColumnIndex("data"));
+        try {
+          JSONObject o = new JSONObject(data);
+          results.add(o);
+        } catch (JSONException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    } finally {
+      if (c != null && !c.isClosed()) {
+        c.close();
       }
     }
     return results;
@@ -139,8 +147,9 @@ class SqliteObjectQueue {
             TABLE_NAME, TABLE_NAME, n));
     SQLiteStatement stmt = db.compileStatement("SELECT CHANGES()");
     long result = stmt.simpleQueryForLong();
-    if (sizeCache.get(dbName) != null) {
-      sizeCache.put(dbName, sizeCache.get(dbName) - result);
+    if (sizeCache.get(ObjectDbHelper.DATABASE_NAME) != null) {
+      sizeCache.put(ObjectDbHelper.DATABASE_NAME, sizeCache.get(ObjectDbHelper.DATABASE_NAME) - result);
     }
+    stmt.close();
   }
 }

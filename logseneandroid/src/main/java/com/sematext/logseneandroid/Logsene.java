@@ -88,7 +88,7 @@ public class Logsene {
     this.context = context;
     this.uuid = Installation.id(context);
     config();
-    this.preflightQueue = new SqliteObjectQueue(Logsene.this.context, "logs", maxOfflineMessages);
+    this.preflightQueue = new SqliteObjectQueue(Logsene.this.context, maxOfflineMessages);
     this.lastScheduled = SystemClock.elapsedRealtime();
 
     schedulePeriodicWorker();
