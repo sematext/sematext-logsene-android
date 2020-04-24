@@ -15,6 +15,24 @@
     />
 
     <Button
+        android:id="@+id/loopButton"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Loop 1000 messages" />
+
+    <Button
+        android:id="@+id/startUnlimitedButton"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Start unlimited loop" />
+
+    <Button
+        android:id="@+id/stopUnlimitedButton"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Stop unlimited messages" />
+
+    <Button
         android:id="@+id/troubleButton"
         android:layout_width="fill_parent"
         android:layout_height="100dp"

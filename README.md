@@ -59,8 +59,7 @@ Add the following inside the application manifest (inside `<application>`):
    android:value="https://logsene-receiver.sematext.com" />
 ```
 
- * **LogseneAppToken (required)**: This is your Logs App token, you should have received one after registering and creating your Logs App.
- We **highly recommend** creating a write-only token in your app settings to prevent any unauthorized access to your logs.
+ * **LogseneAppToken (required)**: This is your Logs App token, you should have received one after registering and creating your Logs App. We **highly recommend** creating a write-only token in your app settings to prevent any unauthorized access to your logs.
  * **LogseneType (required)**: Type to be used for all events (Sematext Logs uses Elasticsearch compatible API)
  * **LogseneMaxOfflineMessages**: Maximum number of offline stored events. Events are stored on the device while it's offline, or if the library is unable to send them to Sematext for some reason.
  * **LogseneReceiverUrl**: If you are using [Sematext Enterprise](https://sematext.com/enterprise), you can put your Logsene Receiver URL here. For EU region please use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.

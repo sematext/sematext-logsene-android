@@ -45,7 +45,7 @@ public class LogWorker extends Worker {
     type = getInputData().getString(Logsene.KEY_TYPE);
 
     this.client = new LogseneClient(getInputData().getString(Logsene.KEY_RECEIVERURL), appToken);
-    this.preflightQueue = new SqliteObjectQueue(context, "logs");
+    this.preflightQueue = new SqliteObjectQueue(context);
 
     long size = preflightQueue.size();
     Log.d(LOG_TAG, "Worker started, message queue size = " + size);

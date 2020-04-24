@@ -14,6 +14,8 @@ import org.json.JSONObject;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
+    private int numberOfRepeatedMessages = 1000;
+    private Thread unlimitedLoop = null;
     private Logsene logsene;
 
     @Override
@@ -39,7 +41,62 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("INFO", "Sending single message to Sematext Cloud");
                 logsene.info("Hello World!");
+            }
+        });
+
+        final Button loopButton = findViewById(R.id.loopButton);
+        loopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("INFO", String.format("Sending %d messages to Sematext Cloud",
+                                numberOfRepeatedMessages));
+                        for (int i = 0; i < numberOfRepeatedMessages; i++) {
+                            logsene.info(String.format("This is a message number %d", i + 1));
+                        }
+                    }
+                }).start();
+            }
+        });
+
+        final Button startUnlimitedLoop = findViewById(R.id.startUnlimitedButton);
+        startUnlimitedLoop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (unlimitedLoop == null) {
+                    unlimitedLoop = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.e("INFO", "Starting unlimited loop");
+                            while (true) {
+                                logsene.info("This is another Sematext Cloud Logs message");
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException ex) {
+                                    Log.e("INFO", "Loop interrupted, exiting");
+                                    return;
+                                }
+                            }
+                        }
+                    });
+                    unlimitedLoop.start();
+                }
+            }
+        });
+
+        final Button stopUnlimitedLoop = findViewById(R.id.stopUnlimitedButton);
+        stopUnlimitedLoop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (unlimitedLoop != null) {
+                    Log.e("INFO", "Stopping unlimited loop");
+                    unlimitedLoop.interrupt();
+                    unlimitedLoop = null;
+                }
             }
         });
 
