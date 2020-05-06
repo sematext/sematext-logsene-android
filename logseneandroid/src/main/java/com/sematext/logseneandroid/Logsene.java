@@ -3,6 +3,7 @@ package com.sematext.logseneandroid;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -82,20 +83,31 @@ public class Logsene {
   private boolean sendRequiresUnmeteredNetwork;
   private boolean sendRequiresDeviceIdle;
   private boolean sendRequiresBatteryNotLow;
+  private LogseneLocationListener locationListener;
 
   public Logsene(Context context) {
+    this(context, false);
+  }
+
+  public Logsene(Context context, boolean automaticLocationEnabled) {
     Utils.requireNonNull(context);
     this.context = context;
     this.uuid = Installation.id(context);
     config();
     this.preflightQueue = new SqliteObjectQueue(Logsene.this.context, maxOfflineMessages);
     this.lastScheduled = SystemClock.elapsedRealtime();
-
+    if (automaticLocationEnabled) {
+      this.locationListener = new LogseneLocationListener(context);
+    }
     schedulePeriodicWorker();
   }
 
   public long getQueueSize() {
     return preflightQueue.size();
+  }
+
+  public LogseneLocationListener getLocationListener() {
+    return locationListener;
   }
 
   private void config() {
@@ -145,11 +157,25 @@ public class Logsene {
    * @param message message text
      */
   public void log(String level, String message) {
+    log(level, message, null, null);
+  }
+
+  /**
+   * Logs a simple message with location.
+   *
+   * @param level value of the log `level` field
+   * @param message message text
+   * @param lat latitude
+   * @param lon longitude
+   */
+  public void log(String level, String message, Double lat, Double lon) {
     Utils.requireNonNull(message);
     JSONObject obj = new JSONObject();
     try {
       obj.put("level", level);
       obj.put("message", message);
+      enrichWithLocation(obj);
+      addLocationToObject(obj, lat, lon);
       addToQueue(obj);
     } catch (JSONException e) {
       // thrown when key is null in put(), so should never happen
@@ -168,9 +194,29 @@ public class Logsene {
   /**
    * Logs debug message.
    * @param message the message text
+   * @param lat latitude
+   * @param lon longitude
+   */
+  public void debug(String message, Double lat, Double lon) {
+    log("debug", message, lat, lon);
+  }
+
+  /**
+   * Logs debug message.
+   * @param message the message text
    */
   public void info(String message) {
     log("info", message);
+  }
+
+  /**
+   * Logs debug message.
+   * @param message the message text
+   * @param lat latitude
+   * @param lon longitude
+   */
+  public void info(String message, Double lat, Double lon) {
+    log("info", message, lat, lon);
   }
 
   /**
@@ -182,11 +228,31 @@ public class Logsene {
   }
 
   /**
+   * Logs debug message.
+   * @param message the message text
+   * @param lat latitude
+   * @param lon longitude
+   */
+  public void warn(String message, Double lat, Double lon) {
+    log("warn", message, lat, lon);
+  }
+
+  /**
    * Logs exception with `warn` level.
    * @param error the exception
    */
   public void warn(Throwable error) {
     log("warn", error);
+  }
+
+  /**
+   * Logs exception with `warn` level.
+   * @param error the exception
+   * @param lat latitude
+   * @param lon longitude
+   */
+  public void warn(Throwable error, Double lat, Double lon) {
+    log("warn", error, lat, lon);
   }
 
   /**
@@ -198,6 +264,16 @@ public class Logsene {
   }
 
   /**
+   * Logs error message.
+   * @param message the message text
+   * @param lat latitude
+   * @param lon longitude
+   */
+  public void error(String message, Double lat, Double lon) {
+    log("error", message, lat, lon);
+  }
+
+  /**
    * Logs exception with `error` level.
    * @param error the exception
    */
@@ -206,11 +282,32 @@ public class Logsene {
   }
 
   /**
+   * Logs exception with `error` level.
+   * @param error the exception
+   * @param lat latitude
+   * @param lon longitude
+   */
+  public void error(Throwable error, Double lat, Double lon) {
+    log("error", error, lat, lon);
+  }
+
+  /**
    * Logs an exception.
    * @param level value of log `level` field
    * @param error any throwable
-     */
+   */
   public void log(String level, Throwable error) {
+    log(level, error, null, null);
+  }
+
+  /**
+   * Log an exception with location.
+   * @param level value of log `level` field
+   * @param error any throwable
+   * @param lat latitude
+   * @param lon longitude
+   */
+  public void log(String level, Throwable error, Double lat, Double lon) {
     Utils.requireNonNull(error);
     JSONObject obj = new JSONObject();
     try {
@@ -218,6 +315,8 @@ public class Logsene {
       obj.put("exception", error.getClass().toString());
       obj.put("message", error.getMessage());
       obj.put("stacktrace", Utils.getStackTrace(error));
+      enrichWithLocation(obj);
+      addLocationToObject(obj, lat, lon);
       addToQueue(obj);
     } catch (JSONException e) {
       // thrown when key is null in put(), so should never happen
@@ -365,6 +464,19 @@ public class Logsene {
     return versionCode;
   }
 
+  private void enrichWithLocation(JSONObject obj) throws JSONException {
+    if (locationListener != null) {
+      obj.put("location", locationListener.getLocationAsString());
+    }
+  }
+
+  private void addLocationToObject(JSONObject obj, Double lat, Double lon) throws JSONException {
+    if (lat != null && lon != null) {
+      obj.put("lat", lat);
+      obj.put("lon", lon);
+    }
+  }
+
   private void enrich(JSONObject obj) {
     assert obj != null;
     try {
@@ -387,6 +499,14 @@ public class Logsene {
           }
         }
         obj.put("meta", metadata);
+      }
+
+      // create a location out of lat and lon fields
+      if (obj.has("lat") && obj.has("lon")) {
+        obj.put("location", String.format("%.2f,%.2f",
+                obj.getDouble("lat"), obj.getDouble("lon")));
+        obj.remove("lat");
+        obj.remove("lon");
       }
     } catch (JSONException e) {
       // thrown when key is null in put(), so should never happen

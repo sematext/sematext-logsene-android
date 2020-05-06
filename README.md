@@ -69,6 +69,7 @@ Add the following inside the application manifest (inside `<application>`):
  * **LogseneRequiresDeviceIdle**: if logs should be shipped only when device is idle
  * **LogseneRequiresBatteryNotLow**: if logs should be shipped only when battery is not low
 
+
 Example Application
 -------------------
 
@@ -123,19 +124,51 @@ try {
 
 Note that these meta fields are global, and will be attached to every event sent to Sematext.
 
+
 Centralized Logging
 -------------------
 
 The library offers some basic functions for centralized logging:
 
-- Logsene.debug(String)
-- Logsene.info(String)
-- Logsene.warn(String)
-- Logsene.warn(Throwable)
-- Logsene.error(String)
-- Logsene.error(Throwable)
+- `Logsene.debug(String)`
+- `Logsene.info(String)`
+- `Logsene.warn(String)`
+- `Logsene.warn(Throwable)`
+- `Logsene.error(String)`
+- `Logsene.error(Throwable)`
 
 For integrating with existing logging frameworks, see below.
+
+Enriching Logs with Location
+----------------------------
+
+Logs can be enriched with location data manually and automatically. For manual enriching the library supports the following methods:
+
+- `Logsene.debug(String, Double, Double)`
+- `Logsene.info(String, Double, Double)`
+- `Logsene.warn(String, Double, Double)`
+- `Logsene.warn(Throwable, Double, Double)`
+- `Logsene.error(String, Double, Double)`
+- `Logsene.error(Throwable, Double, Double)`
+
+For example:
+
+```
+logsene.info("Hello World with Location!", 53.08, 23.08);
+```
+
+It is also possible to tell the library to automatically retrieve location from the device. In such case the `Logsene` object instance needs to be created in the following way:
+
+```
+new Logsene(this, true);
+```
+
+Because of the automatic retrieval of location from the device the `ACCESS_COARSE_LOCATION` and `ACCESS_FINE_LOCATION` permissions are needed:
+
+```
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+```
 
 ### JUL
 

@@ -13,10 +13,14 @@ import java.util.logging.SimpleFormatter;
  */
 public class LogseneHandler extends Handler {
   private final Logsene logsene;
+  private LogseneLocationListener locationListener = null;
 
   public LogseneHandler(Logsene logsene) {
     this.logsene = logsene;
     setFormatter(new SimpleFormatter());
+    if (logsene.getLocationListener() != null) {
+      this.locationListener = logsene.getLocationListener();
+    }
   }
 
   @Override
@@ -37,6 +41,9 @@ public class LogseneHandler extends Handler {
       obj.put("sourceMethod", record.getSourceMethodName());
       if (record.getThrown() != null) {
         obj.put("stacktrace", Utils.getStackTrace(record.getThrown()));
+      }
+      if (locationListener != null && locationListener.isLocationPresent()) {
+        obj.put("location", locationListener.getLocationAsString());
       }
       logsene.event(obj);
     } catch (JSONException e) {
