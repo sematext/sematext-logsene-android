@@ -15,6 +15,12 @@
     />
 
     <Button
+        android:id="@+id/logWithLocationButton"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Log a message with location" />
+
+    <Button
         android:id="@+id/loopButton"
         android:layout_width="match_parent"
         android:layout_height="100dp"

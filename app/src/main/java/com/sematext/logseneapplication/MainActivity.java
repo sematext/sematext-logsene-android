@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        logsene = new Logsene(this);
+        logsene = new Logsene(this, true);
 
         Log.e("INFO", "Android version: " + Build.VERSION.RELEASE);
 
@@ -43,6 +43,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.e("INFO", "Sending single message to Sematext Cloud");
                 logsene.info("Hello World!");
+            }
+        });
+
+        Button logWithLocationButton = findViewById(R.id.logWithLocationButton);
+        logWithLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("INFO", "Sending single message with location to Sematext Cloud");
+                logsene.info("Hello World with Location!", 53.08, 23.08);
             }
         });
 
