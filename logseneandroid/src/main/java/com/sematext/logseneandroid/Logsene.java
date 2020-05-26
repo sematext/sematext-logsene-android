@@ -490,6 +490,7 @@ public class Logsene {
         metadata.put("versionName", getVersionName());
         metadata.put("versionCode", getVersionCode());
         metadata.put("osRelease", Build.VERSION.RELEASE);
+        metadata.put("osType", "Android");
         metadata.put("uuid", uuid);
         if (defaultMeta != null) {
           Iterator<String> keys = defaultMeta.keys();
