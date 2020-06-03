@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         logsene = new Logsene(this, true);
-        logsene.pause();
 
         Log.e("INFO", "Android version: " + Build.VERSION.RELEASE);
 
