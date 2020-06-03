@@ -124,6 +124,23 @@ try {
 
 Note that these meta fields are global, and will be attached to every event sent to Sematext.
 
+Pausing & Resuming Logs Sending
+-------------------------------
+
+The library can be instructed to stop sending logs on demand. To do that you need to call the following function:
+
+```java
+logsene.pause();
+```
+
+Logs sending can be resumed by calling the following function:
+
+```java
+logsene.resume();
+```
+
+Note that the logs that are in the buffer and were waiting to be sent at the time of pausing will not be sent until the logs sending process is resumed. 
+
 
 Centralized Logging
 -------------------

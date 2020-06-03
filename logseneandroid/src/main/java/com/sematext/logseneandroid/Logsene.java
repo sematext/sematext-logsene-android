@@ -83,6 +83,7 @@ public class Logsene {
   private boolean sendRequiresUnmeteredNetwork;
   private boolean sendRequiresDeviceIdle;
   private boolean sendRequiresBatteryNotLow;
+  private boolean isActive;
   private LogseneLocationListener locationListener;
 
   public Logsene(Context context) {
@@ -99,6 +100,7 @@ public class Logsene {
     if (automaticLocationEnabled) {
       this.locationListener = new LogseneLocationListener(context);
     }
+    this.isActive = true;
     schedulePeriodicWorker();
   }
 
@@ -148,6 +150,14 @@ public class Logsene {
         + "  Send logs only when battery is not low: %s",
         type, receiverUrl, maxOfflineMessages, minTimeDelay, timeInterval,
         sendRequiresUnmeteredNetwork, sendRequiresDeviceIdle, sendRequiresBatteryNotLow));
+  }
+
+  public void pause() {
+    this.isActive = false;
+  }
+
+  public void resume() {
+    this.isActive = true;
   }
 
   /**
@@ -426,7 +436,7 @@ public class Logsene {
     }
 
     boolean canSend = lastScheduled == -1 || SystemClock.elapsedRealtime() - lastScheduled > minTimeDelay;
-    if (preflightQueue.size() >= DEFAULT_MIN_BATCH_SIZE && canSend) {
+    if (preflightQueue.size() >= DEFAULT_MIN_BATCH_SIZE && canSend && isActive) {
       scheduleConstrainedWorker();
       lastScheduled = SystemClock.elapsedRealtime();
     }
