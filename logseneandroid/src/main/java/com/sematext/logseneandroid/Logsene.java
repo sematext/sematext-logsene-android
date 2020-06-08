@@ -514,10 +514,12 @@ public class Logsene {
 
       // create a location out of lat and lon fields
       if (obj.has("lat") && obj.has("lon")) {
-        obj.put("location", String.format("%.2f,%.2f",
+        JSONObject geoip = new JSONObject();
+        geoip.put("location", String.format("%.2f,%.2f",
                 obj.getDouble("lat"), obj.getDouble("lon")));
         obj.remove("lat");
         obj.remove("lon");
+        obj.put("geoip", geoip);
       }
     } catch (JSONException e) {
       // thrown when key is null in put(), so should never happen
