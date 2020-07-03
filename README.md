@@ -11,6 +11,28 @@ Library for Shipping Android Applications Logs to Sematext
 
 [Sematext Logs is ELK as a Service][logsene]. This library lets you collect **mobile analytics** and **log data** from your Android applications using Sematext. If you don't have a Sematext account, you can [register for free][register] to get your [App](https://sematext.com/docs/guide/app-guide/) token.
 
+Use the **Mobile Application Logs** Integration to get out-of-the-box reports with the most important information about your mobile applications.
+
+Get an overview of your mobile apps with information like:
+ - top Android versions
+ - top log severities and version names
+
+![Mobile Logpack Overview](images/mobile_overview.png)
+
+Explore the common errors associated with your mobile applications and see an aggregated error view including:
+ - number of errors and theirs count over time
+ - top operating systems, top Android versions that are reporting errors
+ - error log events
+
+![Mobile Logpack Errors](images/mobile_errors.png)
+
+Get insights from dedicated Android report that include:
+ - mobile operating system logs count histogram and their count
+ - top severities, versions, version codes, and version names
+ - mobile applications log events
+
+![Mobile Logpack Android](images/mobile_android.png)
+
 Getting Started
 ===============
 
