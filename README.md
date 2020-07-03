@@ -3,7 +3,7 @@
 [hosted-kibana]: https://sematext.com/docs/logs/kibana/
 [video-tutorials]: https://www.elastic.co/blog/kibana-4-video-tutorials-part-1
 
-Library for Shipping Android Applications Logs to Sematext
+SDK for Shipping Android Application Logs to Sematext
 ==========================================================
 
 [![](https://jitpack.io/v/sematext/sematext-logsene-android.svg)](https://jitpack.io/#sematext/sematext-logsene-android)
