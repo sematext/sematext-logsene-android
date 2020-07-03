@@ -9,7 +9,7 @@ Library for Shipping Android Applications Logs to Sematext
 [![](https://jitpack.io/v/sematext/sematext-logsene-android.svg)](https://jitpack.io/#sematext/sematext-logsene-android)
 [![License](https://img.shields.io/github/license/sematext/sematext-logsene-android.svg)](https://img.shields.io/github/license/sematext/sematext-logsene-android.svg)
 
-[Sematext Logs is ELK as a Service][logsene]. This library lets you collect **mobile analytics** and **log data** from your Android applications using Sematext. If you don't have a Sematext account, you can [register for free][register] to get your [App](https://sematext.com/docs/guide/app-guide/) token.
+[Sematext Logs is ELK as a Service][logsene]. This library lets you collect **mobile analytics** and **log data** from your Android applications using Sematext. There is an equivalent library for [shipping logs from iOS](https://github.com/sematext/sematext-logsene-ios) available.  If you don't have a Sematext account, you can [register for free][register] to get your [App](https://sematext.com/docs/guide/app-guide/) token.
 
 Use the **Mobile Application Logs** Integration to get out-of-the-box reports with the most important information about your mobile applications.
 
