@@ -4,17 +4,21 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public enum Utils {
   INSTANCE, Utils;
 
   private static final SimpleDateFormat ISO8601_FORMAT;
+
   static {
     TimeZone tz = TimeZone.getTimeZone("UTC");
     ISO8601_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SZ");
     ISO8601_FORMAT.setTimeZone(tz);
   }
+
+  public static final Locale DEFAULT_LOCALE = new Locale("en", "US");
 
   public static String iso8601() {
     return ISO8601_FORMAT.format(new Date());

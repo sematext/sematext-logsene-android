@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -142,9 +143,13 @@ class SqliteObjectQueue {
    * @param n amount of elements to remove.
    */
   public void remove(int n) {
-    // On android sqlite deletes with limit and order keywords are disabled so we have to workaround it
-    db.execSQL(String.format("DELETE FROM %s WHERE `id` IN (SELECT `id` FROM %s ORDER BY `id` ASC limit %d);",
-            TABLE_NAME, TABLE_NAME, n));
+    // On android sqlite deletes with limit and order keywords are disabled so we have to workaround it.
+    // In addition to that we need to remember about the Locale here - see:
+    // https://github.com/sematext/sematext-logsene-android/issues/26.
+    String deleteQuery = String.format(Utils.DEFAULT_LOCALE,
+            "DELETE FROM %s WHERE `id` IN (SELECT `id` FROM %s ORDER BY `id` ASC limit %d);",
+            TABLE_NAME, TABLE_NAME, n);
+    db.execSQL(deleteQuery);
     SQLiteStatement stmt = db.compileStatement("SELECT CHANGES()");
     long result = stmt.simpleQueryForLong();
     if (sizeCache.get(ObjectDbHelper.DATABASE_NAME) != null) {
