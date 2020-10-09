@@ -376,12 +376,20 @@ public class Logsene {
 
 
   private Constraints getWorkerConstraints() {
-    return new Constraints.Builder()
+    if (Build.VERSION.SDK_INT >= 23) {
+      return new Constraints.Builder()
             .setRequiredNetworkType(
                     sendRequiresUnmeteredNetwork ? NetworkType.UNMETERED : NetworkType.CONNECTED)
             .setRequiresDeviceIdle(sendRequiresDeviceIdle)
             .setRequiresBatteryNotLow(sendRequiresBatteryNotLow)
             .build();
+    } else {
+      return new Constraints.Builder()
+            .setRequiredNetworkType(
+                    sendRequiresUnmeteredNetwork ? NetworkType.UNMETERED : NetworkType.CONNECTED)
+            .setRequiresBatteryNotLow(sendRequiresBatteryNotLow)
+            .build();
+    }
   }
 
   private void scheduleUnconstrainedWorker() {
