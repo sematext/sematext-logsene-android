@@ -18,11 +18,9 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
 
         <meta-data
             android:name="LogseneAppToken"
@@ -33,7 +31,9 @@
         <meta-data
             android:name="LogseneMaxTimeTrigger"
             android:value="10000" />
-
+        <meta-data
+            android:name="LogseneAutomaticLocationEnabled"
+            android:value="true" />
 
     </application>
 </manifest>

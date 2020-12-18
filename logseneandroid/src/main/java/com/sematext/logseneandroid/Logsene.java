@@ -58,7 +58,6 @@ public class Logsene {
    */
   private static final int DEFAULT_TIME_INTERVAL = 15 * 60 * 1000;
 
-
   private static JSONObject defaultMeta;
   private final Context context;
   private String versionName;
@@ -84,20 +83,17 @@ public class Logsene {
   private boolean sendRequiresDeviceIdle;
   private boolean sendRequiresBatteryNotLow;
   private boolean isActive;
+  private boolean automaticLocationEnabled;
   private LogseneLocationListener locationListener;
 
   public Logsene(Context context) {
-    this(context, false);
-  }
-
-  public Logsene(Context context, boolean automaticLocationEnabled) {
     Utils.requireNonNull(context);
     this.context = context;
     this.uuid = Installation.id(context);
     config();
     this.preflightQueue = new SqliteObjectQueue(Logsene.this.context, maxOfflineMessages);
     this.lastScheduled = SystemClock.elapsedRealtime();
-    if (automaticLocationEnabled) {
+    if (this.automaticLocationEnabled) {
       this.locationListener = new LogseneLocationListener(context);
     }
     this.isActive = true;
@@ -138,6 +134,7 @@ public class Logsene {
     sendRequiresUnmeteredNetwork = data.getBoolean("LogseneSendRequiresUnmeteredNetwork", false);
     sendRequiresDeviceIdle = data.getBoolean("LogseneSendRequiresDeviceIdle", false);
     sendRequiresBatteryNotLow = data.getBoolean("LogseneSendRequiresBatteryNotLow", false);
+    automaticLocationEnabled = data.getBoolean("LogseneAutomaticLocationEnabled", false);
 
     Log.d(TAG, String.format("Logsene is configured:\n"
         + "  Type:                                   %s\n"
@@ -145,10 +142,11 @@ public class Logsene {
         + "  Max Offline Messages:                   %d\n"
         + "  Min Time Trigger:                       %d\n"
         + "  Max Time Trigger:                       %d\n"
+        + "  Automatic location enabled:             %b\n"
         + "  Send logs only on unmetered network:    %s\n"
         + "  Send logs only when device is idle:     %s\n"
         + "  Send logs only when battery is not low: %s",
-        type, receiverUrl, maxOfflineMessages, minTimeDelay, timeInterval,
+        type, receiverUrl, maxOfflineMessages, minTimeDelay, timeInterval, automaticLocationEnabled,
         sendRequiresUnmeteredNetwork, sendRequiresDeviceIdle, sendRequiresBatteryNotLow));
   }
 

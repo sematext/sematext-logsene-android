@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        logsene = new Logsene(this, true);
+        logsene = new Logsene(this);
 
         Log.e("INFO", "Android version: " + Build.VERSION.RELEASE);
 
