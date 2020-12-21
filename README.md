@@ -90,6 +90,7 @@ Add the following inside the application manifest (inside `<application>`):
  * **LogseneRequiresUnmeteredNetwork**: if logs should be shipped only on unmetered network connection
  * **LogseneRequiresDeviceIdle**: if logs should be shipped only when device is idle
  * **LogseneRequiresBatteryNotLow**: if logs should be shipped only when battery is not low
+ * **LogseneAutomaticLocationEnabled**: if logs should be automatically enriched with device location information
 
 
 Example Application
@@ -98,6 +99,22 @@ Example Application
 To see how some basic use cases are actually implemented, checkout the bundled `TestApp` android application. Make sure to set your own App token in the Android manifest.
 
 **Note** that it's highly recommended that you use one instance of Logsene at any time in your app.
+
+Initializing Logsene
+--------------------
+
+Starting with version **3.0.0** of the Android library `Logsene` needs to be initialized in a **static** way in order to be used. This allows usage in classes that don't have `Context` available. To do that, you need to call the following in your application code. Keep in mind this is only needed **once**:
+
+```java
+Logsene.init(this);
+```
+
+To get the instance of the `Logsene` object that supports logging you need to call the `getInstance()` method, for example:
+
+```java
+Logsene logsene = Logsene.getInstance();
+logsene.info("Hello World!");
+```
 
 Mobile Application Analytics
 ----------------------------
@@ -109,7 +126,7 @@ try {
     JSONObject event = new JSONObject();
     event.put("activity", this.getClass().getSimpleName());
     event.put("action", "started");
-    Logsene logsene = new Logsene(this);
+    Logsene logsene = Logsene.getInstance();
     logsene.event(event);
 } catch (JSONException e) {
     Log.e("myapp", "Unable to construct json", e);
@@ -214,7 +231,8 @@ Because of the automatic retrieval of location from the device the `ACCESS_COARS
 If your application uses JUL (java.util.logging) loggers, you can use the provided custom Handler for Logsene. You will need to configure it through code, since we need a reference to the `Context` object. If you configure your loggers to use the `LogseneHandler`, all log messages will be sent to Sematext for centralized logging.
 
 ```java
-Logsene logsene = new Logsene(context);
+Logsene.init(this);
+Logsene logsene = Logsene.getInstance();
 Logger logger = Logger.getLogger("mylogger");
 logger.addHandler(new LogseneHandler(logsene));
 ```
@@ -224,7 +242,8 @@ logger.addHandler(new LogseneHandler(logsene));
 If you use JUL and the `LogseneHandler`, all logged exceptions will be sent to Sematext, no further configuration is needed. However, if you don't use JUL, the library provides a helper method to log exceptions:
 
 ```java
-Logsene logsene = new Logsene(context);
+Logsene.init(this);
+Logsene logsene = Logsene.getInstance();
 try {
     trySomeOperation();
 } catch (IOException e) {
@@ -243,7 +262,8 @@ public class TestApplication extends Application {
         @Override
         public void uncaughtException(Thread thread, Throwable ex) {
             // Send uncaught exception to Logsene.
-            Logsene logsene = new Logsene(TestApplication.this);
+            Logsene.init(TestApplication.this);
+            Logsene logsene = Logsene.getInstance();
             logsene.error(ex);
 
             // Run the default android handler if one is set
@@ -261,3 +281,28 @@ public class TestApplication extends Application {
 ```
 
 Don't forget to declare the custom application class in your manifest (with `android:name` on `application` element).
+
+Migrating to version 3.x from 2.x
+---------------------------------
+
+Starting from version **3.0.0** Logsene Android SDK contains backwards incompatible changes related to how it is initilized. You no longer need to create the `Logsene` object everytime you would like to use it for logging. You no longer create the `Logsene` object itself like this:
+
+```java
+Logsene logsene = new Logsene(context, true);
+
+```
+
+Instead you call the `init(Context)` method once and retrieve the instance of `Logsene` object later:
+
+```java
+Logsene.init(context);
+Logsene logsene = Logsene.getInstance();
+```
+
+You also need to include the `LogseneAutomaticLocationEnabled` property in your manifest file to enable automatic log enrichment with location data:
+
+```xml
+<meta-data
+    android:name="LogseneAutomaticLocationEnabled"
+    android:value="true" />
+```
