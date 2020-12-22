@@ -58,9 +58,9 @@ public class Logsene {
    */
   private static final int DEFAULT_TIME_INTERVAL = 15 * 60 * 1000;
 
-
   private static JSONObject defaultMeta;
-  private final Context context;
+  private static boolean initialized = false;
+  private static Logsene self;
   private String versionName;
   private Integer versionCode;
   private String uuid;
@@ -84,78 +84,82 @@ public class Logsene {
   private boolean sendRequiresDeviceIdle;
   private boolean sendRequiresBatteryNotLow;
   private boolean isActive;
+  private boolean automaticLocationEnabled;
   private LogseneLocationListener locationListener;
 
-  public Logsene(Context context) {
-    this(context, false);
+  // Private constructor - no instances.
+  private Logsene() {
   }
 
-  public Logsene(Context context, boolean automaticLocationEnabled) {
-    Utils.requireNonNull(context);
-    this.context = context;
-    this.uuid = Installation.id(context);
-    config();
-    this.preflightQueue = new SqliteObjectQueue(Logsene.this.context, maxOfflineMessages);
-    this.lastScheduled = SystemClock.elapsedRealtime();
-    if (automaticLocationEnabled) {
-      this.locationListener = new LogseneLocationListener(context);
+  /**
+   * Initializes <code>Logsene</code> object.
+   * @param context Context
+   */
+  public static void init(Context context) {
+    if (!Logsene.isInitialized()) {
+      Utils.requireNonNull(context);
+      Logsene logsene = new Logsene();
+      logsene.uuid = Installation.id(context);
+      logsene.config(context);
+      logsene.preflightQueue = new SqliteObjectQueue(context, logsene.maxOfflineMessages);
+      logsene.lastScheduled = SystemClock.elapsedRealtime();
+      if (logsene.automaticLocationEnabled) {
+        logsene.locationListener = new LogseneLocationListener(context);
+      }
+      logsene.isActive = true;
+      logsene.schedulePeriodicWorker();
+
+      // finally set the static values
+      Logsene.initialized = true;
+      Logsene.self = logsene;
     }
-    this.isActive = true;
-    schedulePeriodicWorker();
   }
 
-  public long getQueueSize() {
-    return preflightQueue.size();
+  /**
+   * Checks if the Logsene object is initialized.
+   * @return <code>true</code> if initialized, <code>false</code> otherwise
+   */
+  public static boolean isInitialized() {
+    return Logsene.initialized;
   }
 
+  /**
+   * Returns instance of <code>Logsene</code> object if it is initialized.
+   * @return <code>Logsene</code> instance
+   */
+  public static Logsene getInstance() {
+    if (Logsene.isInitialized()) {
+      return Logsene.self;
+    }
+    throw new NullPointerException("Logsene is not initialized");
+  }
+
+  /**
+   * Sets the default meta properties. These will be included with every request.
+   * @param metadata the default meta properties, use null to disable.
+   */
+  public static void setDefaultMeta(JSONObject metadata) {
+    defaultMeta = metadata;
+  }
+
+  /**
+   * Returns <code>LogseneLocationListener</code> for location related functionality.
+   * @return <code>LogseneLocationListener</code>
+   */
   public LogseneLocationListener getLocationListener() {
     return locationListener;
   }
 
-  private void config() {
-    Bundle data = null;
-    try {
-      data = context.getPackageManager().getApplicationInfo(context.getPackageName(),
-            PackageManager.GET_META_DATA).metaData;
-    } catch (PackageManager.NameNotFoundException e) {
-      throw new RuntimeException(e);
-    }
-
-    // required fields
-    if (!data.containsKey("LogseneAppToken")) {
-      throw new RuntimeException("Please provide <meta-data name=\"LogseneAppToken\" value=\"yourapptoken\">");
-    } else if (!data.containsKey("LogseneType")) {
-      throw new RuntimeException("Please provide <meta-data name=\"LogseneType\" value=\"example\">");
-    }
-    appToken = data.getString("LogseneAppToken");
-    type = data.getString("LogseneType");
-
-    // optional fields
-    receiverUrl = data.getString("LogseneReceiverUrl", RECEIVER_URL);
-    maxOfflineMessages = data.getInt("LogseneMaxOfflineMessages", DEFAULT_MAX_OFFLINE_MESSAGES);
-    minTimeDelay = (long)(data.getInt("LogseneMinTimeDelay", DEFAULT_MIN_TIME_DELAY));
-    timeInterval = (long)(data.getInt("LogseneInterval", DEFAULT_TIME_INTERVAL));
-    sendRequiresUnmeteredNetwork = data.getBoolean("LogseneSendRequiresUnmeteredNetwork", false);
-    sendRequiresDeviceIdle = data.getBoolean("LogseneSendRequiresDeviceIdle", false);
-    sendRequiresBatteryNotLow = data.getBoolean("LogseneSendRequiresBatteryNotLow", false);
-
-    Log.d(TAG, String.format("Logsene is configured:\n"
-        + "  Type:                                   %s\n"
-        + "  Receiver URL:                           %s\n"
-        + "  Max Offline Messages:                   %d\n"
-        + "  Min Time Trigger:                       %d\n"
-        + "  Max Time Trigger:                       %d\n"
-        + "  Send logs only on unmetered network:    %s\n"
-        + "  Send logs only when device is idle:     %s\n"
-        + "  Send logs only when battery is not low: %s",
-        type, receiverUrl, maxOfflineMessages, minTimeDelay, timeInterval,
-        sendRequiresUnmeteredNetwork, sendRequiresDeviceIdle, sendRequiresBatteryNotLow));
-  }
-
+  /**
+   * Pauses sending of the data.
+   */
   public void pause() {
     this.isActive = false;
   }
 
+  /**
+   * Resumes sending of the data.
+   */
   public void resume() {
     this.isActive = true;
   }
@@ -344,17 +348,6 @@ public class Logsene {
   }
 
   /**
-   * Sets the default meta properties.
-   *
-   * These will be included with every request.
-   *
-   * @param metadata the default meta properties, use null to disable.
-   */
-  public static void setDefaultMeta(JSONObject metadata) {
-    defaultMeta = metadata;
-  }
-
-  /**
    * Flush the message queue.
    *
    * This call is optional, but it is recommended to be called when application is destroyed. This
@@ -364,6 +357,60 @@ public class Logsene {
   public void flushMessageQueue() {
     Log.d(TAG, "Flushing message queue, message queue size = " + preflightQueue.size());
     scheduleUnconstrainedWorker();
+  }
+
+  private void config(Context context) {
+    Bundle data = null;
+    try {
+      data = context.getPackageManager().getApplicationInfo(context.getPackageName(),
+              PackageManager.GET_META_DATA).metaData;
+    } catch (PackageManager.NameNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+
+    // required fields
+    if (!data.containsKey("LogseneAppToken")) {
+      throw new RuntimeException("Please provide <meta-data name=\"LogseneAppToken\" value=\"yourapptoken\">");
+    } else if (!data.containsKey("LogseneType")) {
+      throw new RuntimeException("Please provide <meta-data name=\"LogseneType\" value=\"example\">");
+    }
+    appToken = data.getString("LogseneAppToken");
+    type = data.getString("LogseneType");
+
+    // retrieve version name and version code
+    PackageInfo pInfo = null;
+    try {
+      pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+      versionName = pInfo.versionName;
+      versionCode = pInfo.versionCode;
+    } catch (PackageManager.NameNotFoundException e) {
+      Log.e(TAG, e.getMessage(), e);
+      versionName = "n/a";
+      versionCode = -1;
+    }
+
+    // optional fields
+    receiverUrl = data.getString("LogseneReceiverUrl", RECEIVER_URL);
+    maxOfflineMessages = data.getInt("LogseneMaxOfflineMessages", DEFAULT_MAX_OFFLINE_MESSAGES);
+    minTimeDelay = (long)(data.getInt("LogseneMinTimeDelay", DEFAULT_MIN_TIME_DELAY));
+    timeInterval = (long)(data.getInt("LogseneInterval", DEFAULT_TIME_INTERVAL));
+    sendRequiresUnmeteredNetwork = data.getBoolean("LogseneSendRequiresUnmeteredNetwork", false);
+    sendRequiresDeviceIdle = data.getBoolean("LogseneSendRequiresDeviceIdle", false);
+    sendRequiresBatteryNotLow = data.getBoolean("LogseneSendRequiresBatteryNotLow", false);
+    automaticLocationEnabled = data.getBoolean("LogseneAutomaticLocationEnabled", false);
+
+    Log.d(TAG, String.format("Logsene is configured:\n"
+                    + "  Type:                                   %s\n"
+                    + "  Receiver URL:                           %s\n"
+                    + "  Max Offline Messages:                   %d\n"
+                    + "  Min Time Trigger:                       %d\n"
+                    + "  Max Time Trigger:                       %d\n"
+                    + "  Automatic location enabled:             %b\n"
+                    + "  Send logs only on unmetered network:    %s\n"
+                    + "  Send logs only when device is idle:     %s\n"
+                    + "  Send logs only when battery is not low: %s",
+            type, receiverUrl, maxOfflineMessages, minTimeDelay, timeInterval, automaticLocationEnabled,
+            sendRequiresUnmeteredNetwork, sendRequiresDeviceIdle, sendRequiresBatteryNotLow));
   }
 
   private Data getWorkerData() {
@@ -451,34 +498,10 @@ public class Logsene {
   }
 
   private String getVersionName() {
-    if (versionName == null) {
-      PackageInfo pInfo = null;
-      try {
-        pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-        versionName = pInfo.versionName;
-      } catch (PackageManager.NameNotFoundException e) {
-        Log.e(TAG, e.getMessage(), e);
-        // set to n/a so we don't try again
-        versionName = "n/a";
-      }
-    }
-
     return versionName;
   }
 
   private int getVersionCode() {
-    if (versionCode == null) {
-      PackageInfo pInfo = null;
-      try {
-        pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-        versionCode = pInfo.versionCode;
-      } catch (PackageManager.NameNotFoundException e) {
-        Log.e(TAG, e.getMessage(), e);
-        // set to n/a so we don't try again
-        versionCode = -1;
-      }
-    }
-
     return versionCode;
   }
 
