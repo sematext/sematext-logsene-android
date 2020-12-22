@@ -285,7 +285,7 @@ Don't forget to declare the custom application class in your manifest (with `and
 Migrating to version 3.x from 2.x
 ---------------------------------
 
-Starting from version **3.0.0** Logsene Android SDK contains backwards incompatible changes related to how it is initilized. You no longer need to create the `Logsene` object everytime you would like to use it for logging. You no longer create the `Logsene` object itself like this:
+Starting from version **3.0.0** Logsene Android SDK contains backwards incompatible changes related to how it is initialized. You no longer need to create the `Logsene` object everytime you would like to use it for logging. You no longer create the `Logsene` object itself like this:
 
 ```java
 Logsene logsene = new Logsene(context, true);
