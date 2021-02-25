@@ -237,6 +237,10 @@ Logger logger = Logger.getLogger("mylogger");
 logger.addHandler(new LogseneHandler(logsene));
 ```
 
+### Using this SDK with Timber and Timber.Tree
+
+Timber is a logger with a small, extensible API which provides utility on top of Android's normal Log class.  To use Timber with this SDK for shipping Android logs to Sematext have a look at https://github.com/JakeWharton/timber/blob/master/timber-sample/src/main/java/com/example/timber/ExampleApp.java. You can extend `Timber.Tree` and overwrite the log method and include logging using the `Logsene` object there. Simply initialize the `Logsene` object in the `onCreate` method and everything should work from that point.
+
 ### Logging exceptions
 
 If you use JUL and the `LogseneHandler`, all logged exceptions will be sent to Sematext, no further configuration is needed. However, if you don't use JUL, the library provides a helper method to log exceptions:
