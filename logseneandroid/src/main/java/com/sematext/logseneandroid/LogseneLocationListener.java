@@ -13,40 +13,29 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+
 import java.util.List;
 
 /**
  * Location listener.
  */
-public class LogseneLocationListener extends Activity implements LocationListener {
+public class LogseneLocationListener implements LocationListener {
     private static final int REQUEST_LOCATION = 382173921;
     private LocationManager locationManager;
     private Location location;
     private boolean enabled;
 
     public LogseneLocationListener(Context context) {
-        this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {
-                    Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION },
-                    REQUEST_LOCATION
-            );
+        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            this.enabled = false;
         } else {
-            this.enabled = true;
+            this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             setupLocationRequests();
+            this.enabled = true;
             retrieveLocation();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION) {
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                this.enabled = true;
-                setupLocationRequests();
-                retrieveLocation();
-            }
         }
     }
 
@@ -87,7 +76,10 @@ public class LogseneLocationListener extends Activity implements LocationListene
         return "";
     }
 
-    public void onLocationChanged(Location location) {}
+    @Override
+    public void onLocationChanged(Location location) {
+        this.location = location;
+    }
 
     public void onProviderDisabled(String provider) {}
 

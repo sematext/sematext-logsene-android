@@ -43,7 +43,7 @@ Add the following gradle dependency to your Android application:
 ```
 allprojects {
  repositories {
-    jcenter()
+    mavenCentral()
     maven { url "https://jitpack.io" }
  }
 }
@@ -281,6 +281,11 @@ public class TestApplication extends Application {
 ```
 
 Don't forget to declare the custom application class in your manifest (with `android:name` on `application` element).
+
+Migrating to version 3.1 from previous versions
+-----------------------------------------------
+
+Starting from version **3.1.0** Logsene Android SDK is no longer displaying the prompt to enable location services and provide appropriate rights. It is now the responsibility of the application itself.
 
 Migrating to version 3.x from 2.x
 ---------------------------------
