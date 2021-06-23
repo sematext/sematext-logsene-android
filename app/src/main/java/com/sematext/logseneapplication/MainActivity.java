@@ -1,6 +1,9 @@
 package com.sematext.logseneapplication;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,12 +14,16 @@ import android.widget.Button;
 
 import com.sematext.logseneandroid.Logsene;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 public class MainActivity extends AppCompatActivity {
+    public static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     private int numberOfRepeatedMessages = 1000;
     private Thread unlimitedLoop = null;
     private Logsene logsene;
@@ -30,11 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
         Log.e("INFO", "Android version: " + Build.VERSION.RELEASE);
 
-        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-        boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (!enabled) {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
+        // ask for permissions
+        if (!checkPermissions()) {
+            startLocationPermissionRequest();
         }
 
         try {
@@ -149,5 +154,32 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             Log.e("myapp", "Unable to construct json", e);
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions,
+                                           @NonNull @NotNull int[] grantResults) {
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.length <= 0) {
+                Log.e("INFO", "Cancelled permissions request");
+            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.e("INFO", "Location permissions granted");
+                logsene.initializeLocationListener(getApplicationContext());
+            } else {
+                Log.e("INFO", "Permissions not granted, location services not started");
+            }
+        }
+    }
+
+    private boolean checkPermissions() {
+        int permissionState = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void startLocationPermissionRequest() {
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_PERMISSIONS_REQUEST_CODE);
     }
 }

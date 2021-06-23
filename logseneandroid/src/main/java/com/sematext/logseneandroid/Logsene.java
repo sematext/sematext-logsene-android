@@ -103,9 +103,6 @@ public class Logsene {
       logsene.config(context);
       logsene.preflightQueue = new SqliteObjectQueue(context, logsene.maxOfflineMessages);
       logsene.lastScheduled = SystemClock.elapsedRealtime();
-      if (logsene.automaticLocationEnabled) {
-        logsene.locationListener = new LogseneLocationListener(context);
-      }
       logsene.isActive = true;
       logsene.schedulePeriodicWorker();
 
@@ -132,6 +129,12 @@ public class Logsene {
       return Logsene.self;
     }
     throw new NullPointerException("Logsene is not initialized");
+  }
+
+  public void initializeLocationListener(Context context) {
+    if (automaticLocationEnabled) {
+      locationListener = new LogseneLocationListener(context);
+    }
   }
 
   /**
@@ -507,6 +510,7 @@ public class Logsene {
 
   private void enrichWithLocation(JSONObject obj) throws JSONException {
     if (locationListener != null) {
+      System.out.println("LocAsString: " + locationListener.getLocationAsString());
       obj.put("location", locationListener.getLocationAsString());
     }
   }
