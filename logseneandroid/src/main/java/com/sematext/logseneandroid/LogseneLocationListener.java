@@ -24,52 +24,22 @@ import java.util.Locale;
 /**
  * Location listener.
  */
-public class LogseneLocationListener {
+public class LogseneLocationListener implements LocationListener {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationManager locationManager;
     private Location location;
     private boolean enabled;
 
+    /**
+     * Constructor - should be created only after <code>android.permission.ACCESS_COARSE_LOCATION</code>
+     * or <code>android.permission.ACCESS_FINE_LOCATION</code> is granted.
+     * @param context
+     */
     public LogseneLocationListener(Context context) {
         this.enabled = true;
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
         this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        if (checkPermissions(context)) {
-            setupLocationRequests();
-            retrieveLocation();
-        } else {
-            Log.e("WARN", "Location services permissions not granted, location not available");
-        }
-    }
-
-    @SuppressWarnings("MissingPermission")
-    private void setupLocationRequests() {
-        List<String> enabledLocationProviders = locationManager.getProviders(true);
-        for (String provider : enabledLocationProviders) {
-            locationManager.requestLocationUpdates(provider, 1000, 0, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {}
-
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {}
-
-                @Override
-                public void onProviderEnabled(String s) {}
-
-                @Override
-                public void onProviderDisabled(String s) {}
-            });
-        }
-    }
-
-    @SuppressWarnings("MissingPermission")
-    private void retrieveLocation() {
-        this.fusedLocationProviderClient.getLastLocation().
-                addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        location = task.getResult();
-                    }
-                });
+        setup(context);
     }
 
     public boolean isLocationPresent() {
@@ -89,9 +59,47 @@ public class LogseneLocationListener {
         return "";
     }
 
-    private boolean checkPermissions(Context context) {
-        int permissionState = ActivityCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_FINE_LOCATION);
-        return permissionState == PackageManager.PERMISSION_GRANTED;
+    @Override
+    public void onLocationChanged(Location location) {
+        this.location = location;
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+    }
+
+    private void setup(Context context) {
+        if (Utils.checkLocationPermissions(context)) {
+            setupLocationRequests();
+            retrieveLocation();
+        } else {
+            Log.e("WARN", "Location services permissions not granted, location not available");
+        }
+    }
+
+    @SuppressWarnings("MissingPermission")
+    private void setupLocationRequests() {
+        List<String> enabledLocationProviders = locationManager.getProviders(true);
+        for (String provider : enabledLocationProviders) {
+            locationManager.requestLocationUpdates(provider, 1000, 0, this);
+        }
+    }
+
+    @SuppressWarnings("MissingPermission")
+    private void retrieveLocation() {
+        this.fusedLocationProviderClient.getLastLocation().
+                addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        location = task.getResult();
+                    }
+                });
     }
 }

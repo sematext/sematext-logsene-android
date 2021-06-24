@@ -1,5 +1,11 @@
 package com.sematext.logseneandroid;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+
+import androidx.core.app.ActivityCompat;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -40,5 +46,19 @@ public enum Utils {
     if (o == null) {
       throw new NullPointerException();
     }
+  }
+
+  /**
+   * Checks location permissions.
+   * @param context Context
+   * @return <code>true</code> if location permissions are available
+   */
+  public static boolean checkLocationPermissions(Context context) {
+    int finePermissionState = ActivityCompat.checkSelfPermission(context,
+            Manifest.permission.ACCESS_FINE_LOCATION);
+    int coarsePermissionState = ActivityCompat.checkSelfPermission(context,
+            Manifest.permission.ACCESS_COARSE_LOCATION);
+    return finePermissionState == PackageManager.PERMISSION_GRANTED ||
+            coarsePermissionState == PackageManager.PERMISSION_GRANTED;
   }
 }

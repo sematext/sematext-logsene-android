@@ -131,6 +131,10 @@ public class Logsene {
     throw new NullPointerException("Logsene is not initialized");
   }
 
+  /**
+   * Enables location listener. Should be run after user gives permission for accessing location.
+   * @param context Context
+   */
   public void initializeLocationListener(Context context) {
     if (automaticLocationEnabled) {
       locationListener = new LogseneLocationListener(context);

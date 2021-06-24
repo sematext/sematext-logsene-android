@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.sematext.logseneandroid.Logsene;
+import com.sematext.logseneandroid.Utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -37,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
         Log.e("INFO", "Android version: " + Build.VERSION.RELEASE);
 
-        // ask for permissions
-        if (!checkPermissions()) {
+        // ask for location permissions
+        if (!Utils.checkLocationPermissions(getApplicationContext())) {
             startLocationPermissionRequest();
         }
 
@@ -171,15 +172,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean checkPermissions() {
-        int permissionState = ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
-        return permissionState == PackageManager.PERMISSION_GRANTED;
-    }
-
     private void startLocationPermissionRequest() {
         ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_PERMISSIONS_REQUEST_CODE);
+                new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                }, REQUEST_PERMISSIONS_REQUEST_CODE);
     }
 }
