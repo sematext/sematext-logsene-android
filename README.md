@@ -49,7 +49,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.sematext:sematext-logsene-android:2.1.1'
+    compile 'com.github.sematext:sematext-logsene-android:3.3.0'
 }
 ```
 
@@ -90,8 +90,7 @@ Add the following inside the application manifest (inside `<application>`):
  * **LogseneRequiresUnmeteredNetwork**: if logs should be shipped only on unmetered network connection
  * **LogseneRequiresDeviceIdle**: if logs should be shipped only when device is idle
  * **LogseneRequiresBatteryNotLow**: if logs should be shipped only when battery is not low
- * **LogseneAutomaticLocationEnabled**: if logs should be automatically enriched with device location information
-
+ * **LogseneAutomaticLocationEnabled**: if logs should be automatically enriched with device location information. See the **Enriching Logs with Location** section for more details.
 
 Example Application
 -------------------
@@ -216,7 +215,9 @@ logsene.info("Hello World with Location!", 53.08, 23.08);
 It is also possible to tell the library to automatically retrieve location from the device. In such case the `Logsene` object instance needs to be created in the following way:
 
 ```
-new Logsene(this, true);
+Logsene.init(this);
+Logsene logsene = Logsene.getInstance();
+logsene.initializeLocationListener(context);
 ```
 
 Because of the automatic retrieval of location from the device the `ACCESS_COARSE_LOCATION` and `ACCESS_FINE_LOCATION` permissions are needed:
@@ -225,6 +226,8 @@ Because of the automatic retrieval of location from the device the `ACCESS_COARS
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
 ```
+
+It is also crucial to call the `initializeLocationListener(Context context)` method of the `Logsene` object after the user gives the application the permission to use location data. Otherwise it will not work. Example on how that can be done is included in the `com.sematext.logseneandroid.MainActivity` class.
 
 ### JUL
 
@@ -294,7 +297,6 @@ Starting from version **3.0.0** Logsene Android SDK contains backwards incompati
 
 ```java
 Logsene logsene = new Logsene(context, true);
-
 ```
 
 Instead you call the `init(Context)` method once and retrieve the instance of `Logsene` object later:
