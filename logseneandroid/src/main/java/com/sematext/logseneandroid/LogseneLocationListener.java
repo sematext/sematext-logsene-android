@@ -49,7 +49,8 @@ public class LogseneLocationListener implements LocationListener {
     public String getLocationAsString() {
         try {
             if (isLocationPresent()) {
-                return String.format("%.2f,%.2f", location.getLatitude(), location.getLongitude());
+                return String.format(Locale.ENGLISH, "%.2f,%.2f", location.getLatitude(),
+                        location.getLongitude());
             } else {
                 retrieveLocation();
             }

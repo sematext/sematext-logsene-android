@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import androidx.work.Constraints;
@@ -514,7 +515,6 @@ public class Logsene {
 
   private void enrichWithLocation(JSONObject obj) throws JSONException {
     if (locationListener != null) {
-      System.out.println("LocAsString: " + locationListener.getLocationAsString());
       obj.put("location", locationListener.getLocationAsString());
     }
   }
@@ -554,7 +554,7 @@ public class Logsene {
       // create a location out of lat and lon fields
       if (obj.has("lat") && obj.has("lon")) {
         JSONObject geo = new JSONObject();
-        geo.put("location", String.format("%.2f,%.2f",
+        geo.put("location", String.format(Locale.ENGLISH, "%.2f,%.2f",
                 obj.getDouble("lat"), obj.getDouble("lon")));
         obj.remove("lat");
         obj.remove("lon");
