@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import androidx.work.Constraints;
@@ -103,9 +104,6 @@ public class Logsene {
       logsene.config(context);
       logsene.preflightQueue = new SqliteObjectQueue(context, logsene.maxOfflineMessages);
       logsene.lastScheduled = SystemClock.elapsedRealtime();
-      if (logsene.automaticLocationEnabled) {
-        logsene.locationListener = new LogseneLocationListener(context);
-      }
       logsene.isActive = true;
       logsene.schedulePeriodicWorker();
 
@@ -132,6 +130,16 @@ public class Logsene {
       return Logsene.self;
     }
     throw new NullPointerException("Logsene is not initialized");
+  }
+
+  /**
+   * Enables location listener. Should be run after user gives permission for accessing location.
+   * @param context Context
+   */
+  public void initializeLocationListener(Context context) {
+    if (automaticLocationEnabled) {
+      locationListener = new LogseneLocationListener(context);
+    }
   }
 
   /**
@@ -546,7 +554,7 @@ public class Logsene {
       // create a location out of lat and lon fields
       if (obj.has("lat") && obj.has("lon")) {
         JSONObject geo = new JSONObject();
-        geo.put("location", String.format("%.2f,%.2f",
+        geo.put("location", String.format(Locale.ENGLISH, "%.2f,%.2f",
                 obj.getDouble("lat"), obj.getDouble("lon")));
         obj.remove("lat");
         obj.remove("lon");
