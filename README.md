@@ -49,7 +49,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.sematext:sematext-logsene-android:3.3.0'
+    compile 'com.github.sematext:sematext-logsene-android:3.2.0'
 }
 ```
 
