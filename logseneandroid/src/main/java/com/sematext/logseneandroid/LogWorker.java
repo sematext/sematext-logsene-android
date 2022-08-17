@@ -29,7 +29,10 @@ public class LogWorker extends Worker {
 
   private LogseneClient client;
   private String appToken;
+  private String receiverUrl;
   private String type;
+  private boolean checkUnreachableUrl;
+  private int unreachableUrlTimeout;
   private final Context context;
 
   private SqliteObjectQueue preflightQueue;
@@ -41,10 +44,13 @@ public class LogWorker extends Worker {
 
   @Override
   public Result doWork() {
+    receiverUrl = getInputData().getString(Logsene.KEY_RECEIVERURL);
     appToken = getInputData().getString(Logsene.KEY_APPTOKEN);
     type = getInputData().getString(Logsene.KEY_TYPE);
+    checkUnreachableUrl = getInputData().getBoolean(Logsene.KEY_CHECK_UNREACHABLE_URL,false);
+    unreachableUrlTimeout = getInputData().getInt(Logsene.KEY_UNREACHABLE_URL_TIMEOUT, Logsene.DEFAULT_UNREACHABLE_TIMEOUT);
 
-    this.client = new LogseneClient(getInputData().getString(Logsene.KEY_RECEIVERURL), appToken);
+    this.client = new LogseneClient(receiverUrl, appToken);
     this.preflightQueue = new SqliteObjectQueue(context);
 
     long size = preflightQueue.size();
@@ -96,6 +102,10 @@ public class LogWorker extends Worker {
     leftAttempts -= 1;
     try {
       Log.d(LOG_TAG, "Attempting to send bulk request");
+      if(checkUnreachableUrl && !Utils.isURLReachable(receiverUrl, unreachableUrlTimeout)){
+        Log.e(LOG_TAG, "Unreachable URL");
+        return attemptExecute(bulk, leftAttempts);
+      }
       ApiResponse result = client.execute(bulk);
       if (!result.isSuccessful()) {
         Log.e(LOG_TAG, String.format("Bad status code (%d) returned from api. Response: %s",
