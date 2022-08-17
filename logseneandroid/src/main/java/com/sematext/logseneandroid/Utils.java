@@ -6,8 +6,12 @@ import android.content.pm.PackageManager;
 
 import androidx.core.app.ActivityCompat;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -60,5 +64,24 @@ public enum Utils {
             Manifest.permission.ACCESS_COARSE_LOCATION);
     return finePermissionState == PackageManager.PERMISSION_GRANTED ||
             coarsePermissionState == PackageManager.PERMISSION_GRANTED;
+  }
+
+  /**
+   * @param url URL
+   * @param timeout for the socket connection
+   * @return <code>true</code> if url is reachable
+   */
+  public static boolean isURLReachable(String url, int timeout) {
+    try {
+      final URL u  = new URL(url);
+      final Socket socket = new Socket();
+      socket.setSoTimeout(timeout);
+      socket.connect(new InetSocketAddress(u.getHost(), 80),timeout);
+      boolean isConnected = socket.isConnected();
+      socket.close();
+      return isConnected;
+    }catch (IOException e){
+      return false;
+    }
   }
 }
