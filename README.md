@@ -90,6 +90,8 @@ Add the following inside the application manifest (inside `<application>`):
  * **LogseneRequiresUnmeteredNetwork**: if logs should be shipped only on unmetered network connection
  * **LogseneRequiresDeviceIdle**: if logs should be shipped only when device is idle
  * **LogseneRequiresBatteryNotLow**: if logs should be shipped only when battery is not low
+ * **LogseneCheckUnreachableUrl**: checks if url is reachable before pushing logs
+ * **LogseneUnreachableUrlTimeout**: socket timout to check if url is reachable
  * **LogseneAutomaticLocationEnabled**: if logs should be automatically enriched with device location information. See the **Enriching Logs with Location** section for more details.
 
 Example Application
