@@ -32,6 +32,9 @@ public class Logsene {
   public static final String KEY_APPTOKEN = "LOGSENE_APPTOKEN";
   public static final String KEY_TYPE = "LOGSENE_TYPE";
 
+  public static final String KEY_CHECK_UNREACHABLE_URL = "LOGSENE_CHECK_UNREACHABLE_URL";
+  public static final String KEY_UNREACHABLE_URL_TIMEOUT = "LOGSENE_UNREACHABLE_URL_TIMEOUT";
+  public static final int DEFAULT_UNREACHABLE_TIMEOUT = 500;
   private final String TAG = getClass().getSimpleName();
   private final String FLUSH_WORKER_TAG = "com.sematext.android.LogWorker.unconstrained";
   private final String INTERVAL_WORKER_TAG = "com.sematext.android.LogWorker.interval";
@@ -86,6 +89,8 @@ public class Logsene {
   private boolean sendRequiresBatteryNotLow;
   private boolean isActive;
   private boolean automaticLocationEnabled;
+  private boolean checkUnreachableUrl;
+  private int unreachableUrlTimeout;
   private LogseneLocationListener locationListener;
 
   // Private constructor - no instances.
@@ -406,6 +411,8 @@ public class Logsene {
     sendRequiresDeviceIdle = data.getBoolean("LogseneSendRequiresDeviceIdle", false);
     sendRequiresBatteryNotLow = data.getBoolean("LogseneSendRequiresBatteryNotLow", false);
     automaticLocationEnabled = data.getBoolean("LogseneAutomaticLocationEnabled", false);
+    checkUnreachableUrl = data.getBoolean("LogseneCheckUnreachableUrl", false);
+    unreachableUrlTimeout = data.getInt("LogseneUnreachableUrlTimeout", DEFAULT_UNREACHABLE_TIMEOUT);
 
     Log.d(TAG, String.format("Logsene is configured:\n"
                     + "  Type:                                   %s\n"
@@ -426,6 +433,8 @@ public class Logsene {
             .putString(KEY_RECEIVERURL, receiverUrl)
             .putString(KEY_APPTOKEN, appToken)
             .putString(KEY_TYPE, type)
+            .putBoolean(KEY_CHECK_UNREACHABLE_URL, checkUnreachableUrl)
+            .putInt(KEY_UNREACHABLE_URL_TIMEOUT, unreachableUrlTimeout)
             .build();
   }
 
