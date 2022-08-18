@@ -80,7 +80,7 @@ public enum Utils {
       boolean isConnected = socket.isConnected();
       socket.close();
       return isConnected;
-    }catch (IOException e){
+    } catch (IOException e){
       return false;
     }
   }

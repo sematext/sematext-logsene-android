@@ -102,7 +102,7 @@ public class LogWorker extends Worker {
     leftAttempts -= 1;
     try {
       Log.d(LOG_TAG, "Attempting to send bulk request");
-      if(checkUnreachableUrl && !Utils.isURLReachable(receiverUrl, unreachableUrlTimeout)){
+      if (checkUnreachableUrl && !Utils.isURLReachable(receiverUrl, unreachableUrlTimeout)){
         Log.e(LOG_TAG, "Unreachable URL");
         return attemptExecute(bulk, leftAttempts);
       }

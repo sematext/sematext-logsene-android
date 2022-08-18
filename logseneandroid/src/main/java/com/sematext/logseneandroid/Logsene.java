@@ -412,7 +412,7 @@ public class Logsene {
     sendRequiresBatteryNotLow = data.getBoolean("LogseneSendRequiresBatteryNotLow", false);
     automaticLocationEnabled = data.getBoolean("LogseneAutomaticLocationEnabled", false);
     checkUnreachableUrl = data.getBoolean("LogseneCheckUnreachableUrl", false);
-    unreachableUrlTimeout = (data.getInt("LogseneUnreachableUrlTimeout", DEFAULT_UNREACHABLE_TIMEOUT));
+    unreachableUrlTimeout = data.getInt("LogseneUnreachableUrlTimeout", DEFAULT_UNREACHABLE_TIMEOUT);
 
     Log.d(TAG, String.format("Logsene is configured:\n"
                     + "  Type:                                   %s\n"
