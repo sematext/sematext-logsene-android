@@ -132,7 +132,7 @@ try {
 }
 ```
 
-To visualize the collected data use the [Sematext dashboards](https://sematext.com/docs/dashboards/).
+To visualize the collected data use [Sematext dashboards](https://sematext.com/docs/dashboards/).
 
 If you don't see the events in the dashboard immediately, note that data are sent in batches to preserve the battery (every 60s), or if there are more than 10 events queued up. Events are saved while the device is offline, so you don't have to worry about losing any data.
 
