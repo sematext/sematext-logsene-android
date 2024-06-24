@@ -84,7 +84,7 @@ Add the following inside the application manifest (inside `<application>`):
  * **LogseneAppToken (required)**: This is your Logs App token, you should have received one after registering and creating your Logs App. We **highly recommend** creating a write-only token in your app settings to prevent any unauthorized access to your logs.
  * **LogseneType (required)**: Type to be used for all events (Sematext Logs uses Elasticsearch compatible API)
  * **LogseneMaxOfflineMessages**: Maximum number of offline stored events. Events are stored on the device while it's offline, or if the library is unable to send them to Sematext for some reason.
- * **LogseneReceiverUrl**: If you are using Sematext Cloud US region use https://logsene-receiver.eu.sematext.com. For EU region use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
+ * **LogseneReceiverUrl**: If you are using Sematext Cloud US region use https://logsene-receiver.sematext.com. For EU region use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
  * **LogseneMinTimeDelay**: Minimum amount of time (in milliseconds) to wait between sending logs while application is running and creating new log messages
  * **LogseneInterval**: time interval (in milliseconds) for sending logs regardless of app being active (minimum 15 minutes)
  * **LogseneRequiresUnmeteredNetwork**: if logs should be shipped only on unmetered network connection
