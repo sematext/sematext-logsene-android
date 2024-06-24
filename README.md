@@ -84,7 +84,7 @@ Add the following inside the application manifest (inside `<application>`):
  * **LogseneAppToken (required)**: This is your Logs App token, you should have received one after registering and creating your Logs App. We **highly recommend** creating a write-only token in your app settings to prevent any unauthorized access to your logs.
  * **LogseneType (required)**: Type to be used for all events (Sematext Logs uses Elasticsearch compatible API)
  * **LogseneMaxOfflineMessages**: Maximum number of offline stored events. Events are stored on the device while it's offline, or if the library is unable to send them to Sematext for some reason.
- * **LogseneReceiverUrl**: If you are using [Sematext Enterprise](https://sematext.com/enterprise), you can put your Logsene Receiver URL here. For EU region please use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
+ * **LogseneReceiverUrl**: If you are using Sematext Cloud US region use https://logsene-receiver.eu.sematext.com. For EU region use https://logsene-receiver.eu.sematext.com as the `receiverUrl`.
  * **LogseneMinTimeDelay**: Minimum amount of time (in milliseconds) to wait between sending logs while application is running and creating new log messages
  * **LogseneInterval**: time interval (in milliseconds) for sending logs regardless of app being active (minimum 15 minutes)
  * **LogseneRequiresUnmeteredNetwork**: if logs should be shipped only on unmetered network connection
@@ -118,7 +118,7 @@ logsene.info("Hello World!");
 Mobile Application Analytics
 ----------------------------
 
-With Sematext you get Elasticsearch and Kibana out of the box, which makes it great for mobile analytics. Once you've setup the Logsene service, it's trivial to start sending custom events. For example, you may want to send an event every time a user starts an activity. In that case you could put the following inside the `onCreate()` method:
+Once you've setup the Logsene service, it's trivial to start sending custom events. For example, you may want to send an event every time a user starts an activity. In that case you could put the following inside the `onCreate()` method:
 
 ```java
 try {
@@ -132,7 +132,7 @@ try {
 }
 ```
 
-To visualize the collected data, you would use the [integrated Kibana dashboard][hosted-kibana] or Sematext native UI.
+To visualize the collected data use the [Sematext dashboards](https://sematext.com/docs/dashboards/).
 
 If you don't see the events in the dashboard immediately, note that data are sent in batches to preserve the battery (every 60s), or if there are more than 10 events queued up. Events are saved while the device is offline, so you don't have to worry about losing any data.
 
